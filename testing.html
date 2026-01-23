@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Involved in Testing - Panels DCC</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Panels DCC</a>
+            <ul class="nav-links">
+                <li><a href="explore.html">Operation</a></li>
+                <li><a href="configuration.html">Configuration</a></li>
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="future.html">Future</a></li>
+                <li><a href="testing.html">Testing</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="full-width-section">
+            <h1>Get Involved in Testing</h1>
+            <p><strong>Help us expand controller support</strong></p>
+            <p>PanelsD.CC is currently in a testing phase, and it would be fantastic if any willing volunteers can help test the <strong>gateway application</strong> and <strong>controller support</strong>.</p>
+        </div>
+
+        <hr/>
+
+        <div class="content-section">
+            <div class="section-text">
+                <h2>What needs Testing</h2>
+                <p>The gateway application is the bridge between your physical DCC layout and the PanelsD.CC cloud platform. While it is currently designed to run on a <strong>Raspberry Pi</strong> connected to your DCC controller.</p>
+                <p>The gateway is built on top of <strong>JRMI's JRMIX abstraction layer</strong> — the component of JRMI that handles connections to different DCC controllers. This means PanelsD.CC can take advantage of JRMI's broad controller support rather than re-implementing it from scratch.</p>
+                <p><strong>Important note:</strong> PanelsD.CC only uses JRMI for controller connectivity. It does not use JRMI's data models, configuration systems, or features like sensor handling and automatic running. PanelsD.CC is a completely separate system that happens to use JRMI's controller abstraction layer.</p>
+                <p>The gateway is <strong>open source</strong> and available on GitHub: <a href="https://github.com/davetaz/dcc-io-daemon" target="_blank">dcc-io-daemon</a>. If you're feeling brave, you can check out the README and try installing it on other platforms — we'd love to hear how it goes!</p>
+                <p>The README in the GitHub repository contains all the details on how the gateway application works and the API that PanelsD.CC uses to communicate with it. In theory, you could even write your own application to interface with PanelsD.CC — but trust me, it takes a long time!</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Gateway Architecture
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section reverse">
+            <div class="section-text">
+                <h2>Why Your Help is Needed</h2>
+                <p>PanelsD.CC is a <strong>hobby project</strong> that has taken two years to reach this point, developed alongside a full-time job and raising a toddler (as mentioned in the <a href="future.html">future features section</a>). This means there's no big team or investment behind it — just one person working in their spare time.</p>
+                <p>One of the biggest challenges is <strong>limited access to different DCC controllers</strong> for testing. During development, testing has been done with a <strong>Hornby Elite</strong> controller, which works well and even auto-detects when connected to the Raspberry Pi — a zero-configuration setup!</p>
+                <p>However, to make PanelsD.CC useful for more people, we need to test and verify support for other controllers. This is where you come in.</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Controller Testing
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section">
+            <div class="section-text">
+                <h2>Expectations</h2>
+                <p>PanelsD.CC is a <strong>hobby project</strong> that has taken significant time and investment to reach this point. I believe systems like this might help get more people into the hobby, and I'm committed to making it work.</p>
+                <p>For any volunteers who are genuine and willing to help, I will accommodate as much as I can. However, there are some practical limitations:</p>
+                <p><strong>Ideal volunteers:</strong></p>
+                <ul>
+                    <li>Have confidence working with software in development</li>
+                    <li>Have experience connecting controllers to PC systems</li>
+                    <li>Ideally have experience with connecting controllers to JMRI and know what works for their setup</li>
+                </ul>
+                <p><strong>Even more ideal:</strong></p>
+                <p>If you're adept with the <strong>JRMIX abstraction layer</strong> or confident using AI coding tools (such as Cursor) to contribute directly to the gateway code, you could help by submitting pull requests to add support for your controller. This would be incredibly valuable and would help expand controller support much faster.</p>
+                <p>Alternatively, if you're willing to <strong>lend a controller</strong> (with the necessary PC connection components), I'm open to that as well. This would allow me to test and implement support directly.</p>
+                <p><strong>Time constraints:</strong></p>
+                <p>I don't have time to walk people through more than what's provided in the instructions here, especially if it is related to controllers I don't own. If you're comfortable following technical documentation and troubleshooting on your own, you're exactly the kind of volunteer I'm looking for.</p>
+                <p><strong>Important disclaimer:</strong></p>
+                <p>This testing software comes <strong>without warranty</strong> and I cannot be held responsible for any damage or loss that may be in any way claimed to be related to testing. You're testing at your own risk, using your own equipment.</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Testing Process
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>What You'll Be Testing</h2>
+            <p>If you're willing to help, you'll be testing:</p>
+            <ul>
+                <li><strong>Gateway installation</strong> on a Raspberry Pi</li>
+                <li><strong>Controller detection and connection</strong> with your specific DCC controller</li>
+                <li><strong>Basic train control</strong> Train 3 - speed, direction, functions</li>
+                <li><strong>Accessory control</strong> Accessory 1 - open, closed</li>
+                <li><strong>Stability and reliability</strong> during operation</li>
+            </ul>
+            <p>The gateway includes a <strong>configuration web interface</strong> that runs locally on the Raspberry Pi, allowing you to configure the gateway and test controlling train 3 and accessory 1.</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Supported Controllers</h2>
+            <p><em>[Placeholder: List of currently supported/tested controllers]</em></p>
+            <p><strong>Currently tested:</strong></p>
+            <ul>
+                <li>Hornby Elite (auto-detection supported)</li>
+            </ul>
+            <p><strong>Controllers we'd like to test:</strong></p>
+            <ul>
+                <li>NCE Powercab</li>
+                <li>Z21</li>
+                <li>DCC-EX</li>
+                <li>MCE (Prodigy Advance)</li>
+                <li>Others on request as there is still some abstraction layers that need implement in the code for different controllers, it is not a one size fits all, even with JRMI helping.</li>
+            </ul>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Installation Instructions</h2>
+            <p><em>[Placeholder: Step-by-step installation instructions for Raspberry Pi]</em></p>
+            <p>The gateway application can be easily installed on a Raspberry Pi following the instructions below. The installation process will:</p>
+            <ul>
+                <li>Install all required dependencies</li>
+                <li>Install JRMI and JRMIX</li>
+                <li>Set up the gateway application</li>
+                <li>Configure the gateway web interface</li>
+            </ul>
+            <p><strong>Prerequisites:</strong></p>
+            <ul>
+                <li>Raspberry Pi (model and OS version TBD) - <em>or other platform with Java support if you're feeling adventurous</em></li>
+                <li>DCC controller</li>
+                <li>USB/serial/network connection between device and controller</li>
+            </ul>
+            <p><strong>Installation steps:</strong></p>
+            <ol>
+                <li>[Step 1: Download and prepare]</li>
+                <li>[Step 2: Run installation script]</li>
+                <li>[Step 3: Configure gateway]</li>
+                <li>[Step 4: Connect to controller]</li>
+            </ol>
+            <p><strong>For other platforms:</strong> The gateway is a Java application, so it should theoretically run on any platform with Java support. See the <a href="https://github.com/davetaz/dcc-io-daemon" target="_blank">GitHub repository README</a> for more details. If you try installing on a different platform, please let us know how it goes!</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Testing Instructions</h2>
+            <p><em>[Placeholder: Detailed testing procedures]</em></p>
+            <p>Once the gateway is installed, you can test controller support through the gateway's web interface:</p>
+            <p><strong>Initial Testing:</strong></p>
+            <ol>
+                <li>[Connect controller to Raspberry Pi]</li>
+                <li>[Access gateway web interface]</li>
+                <li>[Verify controller detection]</li>
+                <li>[Test basic connectivity]</li>
+            </ol>
+            <p><strong>Functional Testing:</strong></p>
+            <ol>
+                <li>[Test train control]</li>
+                <li>[Test accessory control]</li>
+                <li>[Test stability over time]</li>
+                <li>[Test with PanelsD.CC platform]</li>
+            </ol>
+            <p><strong>What to look for:</strong></p>
+            <ul>
+                <li>Controller is detected automatically</li>
+                <li>Commands are sent and received correctly</li>
+                <li>No connection drops or errors</li>
+                <li>All expected functions work as expected</li>
+            </ul>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Logging Feedback</h2>
+            <p><em>[Placeholder: Instructions for reporting test results]</em></p>
+            <p>Your feedback is invaluable in helping expand controller support. When reporting your test results, please include:</p>
+            <p><strong>Required Information:</strong></p>
+            <ul>
+                <li>Controller make and model</li>
+                <li>Platform (Raspberry Pi model and OS version, or other platform details)</li>
+                <li>Installation method used</li>
+                <li>Any errors or issues encountered</li>
+            </ul>
+            <p><strong>Testing Results:</strong></p>
+            <ul>
+                <li>Controller detection: [Working / Not working / Partial]</li>
+                <li>Train control: [Working / Not working / Issues]</li>
+                <li>Accessory control: [Working / Not working / Issues]</li>
+                <li>Overall stability: [Stable / Unstable / Notes]</li>
+            </ul>
+            <p><strong>How to submit feedback:</strong></p>
+            <ul>
+                <li>[Method 1: GitHub issues]</li>
+                <li>[Method 2: Email]</li>
+                <li>[Method 3: Forum/Discussion board]</li>
+            </ul>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>What Happens Next</h2>
+            <p>As controller support is verified and tested, we'll:</p>
+            <ul>
+                <li>Update the supported controllers list</li>
+                <li>Document any controller-specific configuration requirements</li>
+                <li>Fix any issues that are discovered</li>
+                <li>Expand testing to additional controllers</li>
+            </ul>
+            <p>Your participation helps make PanelsD.CC accessible to more modellers, regardless of which DCC controller they use.</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h3>Related:</h3>
+            <ul>
+                <li><a href="explore.html">Explore PanelsD.CC features →</a></li>
+                <li><a href="installation.html">Learn about installation →</a></li>
+                <li><a href="future.html">See future plans →</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
