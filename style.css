@@ -166,6 +166,25 @@ hr::before {
     font-style: italic;
 }
 
+/* Stacked section: content full width, then media full width below */
+.content-section-stacked {
+    grid-template-columns: 1fr;
+}
+
+.content-section-stacked .section-media-fullwidth {
+    grid-column: 1;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.section-media-fullwidth .section-media-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* Full-width sections (no columns) */
 .full-width-section {
     margin: 4rem 0;
