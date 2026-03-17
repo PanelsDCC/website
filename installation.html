@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation & Setup - Panels DCC</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Getting Started - PanelsDCC</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
 <body>
     <nav class="nav">
         <div class="nav-container">
@@ -21,108 +21,45 @@
     </nav>
 
     <div class="main-container">
+        <div class="full-width-section early-access-banner">
+            <p><strong>Early access status:</strong> PanelsDCC is currently in <strong>Phase&nbsp;1 – Controller Compatibility</strong> of the early access programme, focused on proving PanelsDCC Connect with a wide range of DCC controllers.</p>
+            <p><a href="early-access.html">Find out more about the early access programme and how to get involved →</a></p>
+        </div>
+
         <div class="full-width-section">
-            <h1>Installation & Setup</h1>
-            <p><strong>Minimal setup, maximum resilience</strong></p>
-            <p>PanelsD.CC is <strong>not</strong> a traditional desktop application. There's nothing to install on your devices, no operating system dependencies, and no single "control PC" that everything revolves around.</p>
-        </div>
-
-        <hr/>
-
-        <div class="content-section">
-            <div class="section-text">
-                <h2>Cloud-Hosted, Not Installed</h2>
-                <p><strong>Your railway, everywhere you need it</strong></p>
-                <p>PanelsD.CC is <strong>cloud-hosted</strong> and runs directly in a web browser. This allows the same system to work seamlessly across:</p>
-                <ul>
-                    <li>Mobile phones</li>
-                    <li>Tablets</li>
-                    <li>Laptops and desktops</li>
-                    <li>Large screens and wall-mounted displays</li>
-                </ul>
-                <p>Smaller devices are ideal for <strong>train and accessory control</strong>, while larger screens really come into their own for <strong>panels</strong>, where the full layout can be seen and operated at once.</p>
-                <p>Because configuration lives in the cloud, layouts can be designed, refined, and extended from anywhere — without needing to be physically connected to the railway.</p>
-            </div>
-            <div class="section-media">
-                <div class="section-media-placeholder">
-                    Image/Video: Multi-Device Cloud Access
-                </div>
-            </div>
-        </div>
-
-        <hr/>
-
-        <div class="content-section reverse">
-            <div class="section-text">
-                <h2>A Simple Gateway to the Railway</h2>
-                <p>The only local component required is a <strong>small gateway application</strong>, connected to a supported DCC controller.</p>
-                <p>The gateway acts as the bridge between the physical railway and PanelsD.CC:</p>
-                <ul>
-                    <li>It connects your DCC system to the Panels platform</li>
-                    <li>It requires minimal configuration</li>
-                    <li>It allows all devices to interact with the layout through a single, consistent interface</li>
-                </ul>
-                <p>Crucially, the gateway is designed not just for connectivity, but for <strong>operational resilience</strong>.</p>
-                <p>While configuration and layout design remain cloud-based, the gateway <strong>supports offline operation</strong>. The core components needed to run the layout — panels, train control, and accessory control — can be hosted locally when required.</p>
-                <p>In practice, this means layouts can be prepared and configured in advance, then operated reliably at exhibitions or venues where internet access may be limited or unavailable — without changing how the system is used.</p>
-            </div>
-            <div class="section-media">
-                <div class="section-media-placeholder">
-                    Image/Video: Gateway Setup
-                </div>
-            </div>
-        </div>
-
-        <hr/>
-
-        <div class="content-section">
-            <div class="section-text">
-                <h2>One Railway, Many Screens</h2>
-                <p><strong>Always in sync</strong></p>
-                <p>PanelsD.CC is built around the idea that a layout is rarely operated from a single device.</p>
-                <p>The live state of the railway — trains, accessories, signals, and routes — is shared and kept <strong>continuously in sync</strong> across all connected devices. Every action is reflected instantly everywhere.</p>
-                <p>This enables flexible operating patterns:</p>
-                <ul>
-                    <li>A large screen showing the overall panel and layout state</li>
-                    <li>Tablets or phones used to drive individual trains</li>
-                    <li>Devices dedicated to specific areas, yards, or stations</li>
-                    <li>Multiple operators working together at the same time</li>
-                </ul>
-                <p>For club layouts and exhibitions, operators can even <strong>bring their own devices</strong>, instantly expanding the control surface. This is where the <strong>plural in Panels</strong> really matters.</p>
-            </div>
-            <div class="section-media">
-                <div class="section-media-placeholder">
-                    Image/Video: Multi-Screen Synchronization
-                </div>
-            </div>
-        </div>
-
-        <hr/>
-
-        <div class="content-section reverse">
-            <div class="section-text">
-                <h2>Designed for Modern, Shared Operation</h2>
-                <p><strong>From home layouts to exhibitions</strong></p>
-                <p>By separating configuration from operation, PanelsD.CC supports both everyday running and more demanding environments.</p>
-                <p>You can:</p>
-                <ul>
-                    <li>Design and refine your layout in the cloud</li>
-                    <li>Run with multiple operators on multiple devices</li>
-                    <li>Display the layout state on large shared screens</li>
-                    <li>Continue operating confidently even when connectivity isn't guaranteed</li>
-                </ul>
-                <p>This approach avoids the compromises of single-machine control systems, while still supporting the realities of club and exhibition layouts.</p>
-            </div>
-            <div class="section-media">
-                <div class="section-media-placeholder">
-                    Image/Video: Shared Operation Scenarios
-                </div>
-            </div>
+            <h1>Getting started with PanelsDCC</h1>
+            <p>PanelsDCC is <strong>not</strong> a traditional desktop application. There's nothing to install on your everyday devices, no operating system dependencies, and no single "control PC" that everything revolves around.</p>
+            <p>Instead, PanelsDCC follows a simple three-stage model that mirrors how you set up and run your railway:</p>
+            <ul>
+                <li><strong>Design</strong> – configure trains, accessories, and visual control panels in the cloud</li>
+                <li><strong>Control</strong> – run the layout from a Raspberry&nbsp;Pi using any browser-equipped device</li>
+                <li><strong>Connect</strong> – link the Raspberry&nbsp;Pi to your DCC controller</li>
+            </ul>
+            <p><strong>TL;DR – what you need</strong></p>
+            <ul>
+                <li><strong>A Raspberry&nbsp;Pi</strong> on your layout, with PanelsDCC Control and PanelsDCC Connect installed.</li>
+                <li><strong>A supported DCC command station</strong>, physically connected to the Raspberry&nbsp;Pi.</li>
+                <li><strong>Your own devices</strong> – phones, tablets, laptops, desktops – with a modern web browser to connect to the Raspberry&nbsp;Pi over your network.</li>
+                <li><strong>A PanelsDCC account</strong> so you can configure trains, accessories, and panels.</li>
+            </ul>
         </div>
 
         <hr/>
 
         <div class="full-width-section">
+            <h2>Getting Started in Three Steps</h2>
+            <ol>
+                <li><strong>Install PanelsDCC Connect</strong> on your Raspberry&nbsp;Pi and test that it can talk to your DCC controller or controllers.</li>
+                <li><strong>Sign up for PanelsDCC</strong>, create your account, download PanelsDCC Control to the Raspberry&nbsp;Pi, create your first train and accessory in PanelsDCC Design, and sync them to PanelsDCC Control.</li>
+                <li><strong>Grow at your own pace</strong> – once the first train and accessory are working, you are ready to scale up to your entire layout.</li>
+            </ol>
+            <p>There is some setup to do, but PanelsDCC will guide you through the process.</p>
+        </div>
+        <hr/>
+        <div class="full-width-section">
+            <h2>Read more about the PanelsDCC architecture</h2>
+            <p>If you’d like to understand the two main components, why PanelsDCC is built this way, and what it enables for shared, multi‑device operation, you can read more on the architecture page.</p>
+            <p><a href="architecture.html">Learn about the architecture of PanelsDCC →</a></p>
             <h3>Related:</h3>
             <ul>
                 <li><a href="explore.html">Explore control features →</a></li>
@@ -130,6 +67,7 @@
                 <li><a href="future.html">See what's coming next →</a></li>
             </ul>
         </div>
+
     </div>
 </body>
 </html>

@@ -191,6 +191,48 @@ hr::before {
     padding: 2rem 0;
 }
 
+/* Tables */
+.full-width-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.full-width-section th,
+.full-width-section td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.full-width-section thead th {
+    background: var(--background);
+    color: var(--text-bright);
+}
+
+.full-width-section tbody tr:nth-child(even) {
+    background: var(--background-alt);
+}
+
+.full-width-section code {
+    font-size: 0.9em;
+}
+
+.early-access-banner {
+    margin: 1.5rem 0 2rem 0;
+    padding: 0.75rem 1rem;
+    background: var(--background-alt);
+    border-left: 4px solid var(--links);
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.early-access-banner p {
+    margin: 0.1rem 0;
+}
+
 .full-width-section h2 {
     color: var(--text-bright);
     margin-top: 0;
