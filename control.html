@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PanelsDCC Control</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Panels DCC</a>
+            <ul class="nav-links">
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="installation.html" class="nav-link-getting-started">Installation and getting started</a></li>
+                <li><a href="testing.html">Testing</a></li>
+                <li><a href="future.html">Future</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="getting-started-layout">
+        <nav class="getting-started-track" data-step="3" aria-label="Getting started steps">
+            <div class="getting-started-track-head">
+                <h2 class="getting-started-track-heading">Getting started</h2>
+                <p class="getting-started-track-summary">Step 3 of 4 · Driving your first train</p>
+            </div>
+            <div class="gs-progress" aria-hidden="true"><div class="gs-progress-fill"></div></div>
+            <ol class="getting-started-steps">
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="installation.html"><span class="step-name">Installation</span></a>
+                </li>
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="connect.html"><span class="step-name">Connecting your DCC controller</span></a>
+                </li>
+                <li class="getting-started-step is-current" aria-current="step">
+                    <span class="step-inner"><span class="step-name">Driving your first train</span></span>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="configuration.html"><span class="step-name">Configure trains, accessories &amp; panels</span></a>
+                </li>
+            </ol>
+        </nav>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>PanelsDCC Control</h1>
+            <p>Once Connect is working with your command station, use PanelsDCC Control to run your layout from any browser on your network.</p>
+            <p>If you used hostname <strong>panels-dcc</strong>, open:</p>
+            <pre><code>http://panels-dcc/</code></pre>
+            <p>Otherwise use <code>http://&lt;hostname&gt;/</code> (same hostname as Connect, without the port).</p>
+
+            <h2>Best on mobile and tablet: install as a PWA</h2>
+            <p>Before going further, if you use PanelsDCC Control on a phone or tablet, it is best to install it as a <strong>Progressive Web App (PWA)</strong>.</p>
+            <p>A PWA is a website that can be added to your home screen and launched like a normal app, with full-screen behavior and quick access.</p>
+            <p><strong>iPhone / iPad (Safari):</strong> open PanelsDCC Control, tap <strong>Share</strong>, tap <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</p>
+            <p><strong>Android (Chrome):</strong> open PanelsDCC Control, tap the menu (<strong>...</strong>), then tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+            <p>Launch it from your home screen, then continue.</p>
+
+            <h2>First launch and login</h2>
+            <p>When you first open PanelsDCC Control, it asks you to log in.</p>
+            <p>If you do not yet have a PanelsDCC account, you can skip login and operate trains only. This is useful for testing everything works before you create an account.</p>
+
+            <h2>Connection status at the top of the screen</h2>
+            <p>After login (or not), the top of the screen shows the connection state to PanelsDCC Connect.</p>
+            <ul>
+                <li><strong>Ready</strong>: connected to PanelsDCC Connect, with a controller plugged in and detected.</li>
+                <li><strong>No controllers</strong>: connected to PanelsDCC Connect, but no controller is currently connected or detected. Check <a href="connect.html">PanelsDCC Connect setup</a>.</li>
+                <li><strong>Offline</strong>: this client device cannot connect to PanelsDCC Connect.</li>
+            </ul>
+            <p>Offline is unusual when both are running on the Raspberry Pi, but it can happen on managed enterprise devices that block required local traffic. For best results, avoid enterprise-managed devices with strict security policies.</p>
+            <p>You can check this status at any time in the settings page of PanelsDCC Control.</p>
+            
+            <h2>Train control without login (quick test mode)</h2>
+            <p>Without login, you will <strong>not</strong> have access to train creation with function maps, and accessory or panel operation will not be available.</p>
+            <p>Once you have an account and log in, PanelsDCC Control syncs your data from the cloud. You can then operate trains, accessories, and panels that you have configured.</p>
+            <p>To run trains without logging in:</p>
+            <ol>
+                <li>Open <strong>Trains</strong>.</li>
+                <li>Click <strong>Select by DCC number</strong>.</li>
+                <li>Enter the DCC number of the train you want to control.</li>
+                <li>Control speed and direction, then use the function number buttons.</li>
+            </ol>
+
+            <p>For layout and account setup, see <a href="configuration.html">Configuration</a>.</p>
+            <p><a href="connect.html">← Back to PanelsDCC Connect setup</a></p>
+        </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

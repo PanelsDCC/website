@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PanelsDCC Connect Setup</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Panels DCC</a>
+            <ul class="nav-links">
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="installation.html" class="nav-link-getting-started">Installation and getting started</a></li>
+                <li><a href="testing.html">Testing</a></li>
+                <li><a href="future.html">Future</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="getting-started-layout">
+        <nav class="getting-started-track" data-step="2" aria-label="Getting started steps">
+            <div class="getting-started-track-head">
+                <h2 class="getting-started-track-heading">Getting started</h2>
+                <p class="getting-started-track-summary">Step 2 of 4 · Connecting your DCC controller</p>
+            </div>
+            <div class="gs-progress" aria-hidden="true"><div class="gs-progress-fill"></div></div>
+            <ol class="getting-started-steps">
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="installation.html"><span class="step-name">Installation</span></a>
+                </li>
+                <li class="getting-started-step is-current" aria-current="step">
+                    <span class="step-inner"><span class="step-name">Connecting your DCC controller</span></span>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="control.html"><span class="step-name">Driving your first train</span></a>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="configuration.html"><span class="step-name">Configure trains, accessories &amp; panels</span></a>
+                </li>
+            </ol>
+        </nav>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Set up PanelsDCC Connect</h1>
+            <p>After installing PanelsDCC on your Raspberry Pi, this page walks you through opening Connect and attaching your command station.</p>
+            <p>For many users it can be as simple as <strong>plugging your controller into the Pi and turning it on</strong>. If your controller supports zero-configuration auto-detection and you only use one controller, Connect may configure itself and you might not need to change any settings.</p>
+            <p>Check the table below to see which controllers support <strong>zero configuration</strong> (auto-detection). Everything else needs manual setup in Connect.</p>
+
+            <h2>Which controllers support zero-configuration auto-detection?</h2>
+            <p>The <strong>Zero configuration</strong> column shows whether Connect can detect and set up the device automatically. Controllers marked <strong>Untested</strong> are currently unknown and may auto-connect or may require manual setup.</p>
+            <p>If you are using an untested controller, please read the <a href="testing.html">testing page</a> first.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Controller</th>
+                        <th>Implemented in PanelsDCC Connect</th>
+                        <th>Status</th>
+                        <th>Zero configuration</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hornby Elite / XpressNet</strong> (<code>xnet-elite</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Working</strong></td>
+                        <td>Yes</td>
+                        <td>Auto-detects and should appear as connected when attached.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (serial)</strong> (<code>nce-serial</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (USB)</strong> (<code>nce-usb</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCC++ (Ethernet)</strong> (<code>dccpp-ethernet</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Controllers listed as untested are implemented but still need wider real-world validation.</p>
+        </div>
+        <hr/>
+        <div class="full-width-section">
+            <h1>Manual configuration and testing</h1>
+            <h2>Step 1: Access Connect</h2>
+            <p>If you used hostname <strong>panels-dcc</strong>, open:</p>
+            <pre><code>http://panels-dcc:9000/</code></pre>
+            <p>If you chose a different hostname, use:</p>
+            <pre><code>http://&lt;hostname&gt;:9000/</code></pre>
+            <p>If you are on the Raspberry Pi desktop, you can also open the <strong>PanelsDCC Connect</strong> shortcut.</p>
+
+            <h2>Step 2: Connect your controller</h2>
+            <p>Connect your command station to the Pi, then follow the path that matches your controller:</p>
+            <ul>
+                <li><strong>Auto-detected device:</strong> it is configured automatically and should appear as connected.</li>
+                <li><strong>Manual setup:</strong> enter the connection details yourself, then create the connection.</li>
+            </ul>
+            <p>For manual setup, fill in:</p>
+            <ul>
+                <li>Connection ID (example: <code>elite1</code>)</li>
+                <li>Controller Type (example: <code>Hornby Elite / XpressNet</code>)</li>
+                <li>Port (for serial/USB) or Host/Port (for network)</li>
+                <li>Baud Rate and Flow Control (for serial controllers)</li>
+                <li>Click <strong>Create Connection</strong></li>
+            </ul>
+            <p><strong>Role assignment behaviour:</strong></p>
+            <ul>
+                <li>If you have one controller, it is auto-assigned to both <strong>trains</strong> and <strong>accessories</strong>.</li>
+                <li>If you add a second controller, it is auto-assigned as the <strong>accessories</strong> controller.</li>
+                <li>If you run two controllers, check role assignment each time you start up in Connect.</li>
+            </ul>
+
+            <h2>Step 3: Confirm everything works</h2>
+            <p>Use Connect to verify the basics:</p>
+            <ol>
+                <li>Confirm your command station appears as connected and you can see some information about the manufacturer and version.</li>
+                <li>Test one locomotive movement and function (where possible).</li>
+                <li>Test one accessory (typically a point).</li>
+            </ol>
+            <p>Once a train and an accessory behave as expected, you are ready to use <a href="control.html">PanelsDCC Control</a> for day-to-day operation.</p>
+        </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

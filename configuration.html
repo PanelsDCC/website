@@ -11,21 +11,55 @@
         <div class="nav-container">
             <a href="index.html" class="nav-logo">Panels DCC</a>
             <ul class="nav-links">
-                <li><a href="explore.html">Operation</a></li>
-                <li><a href="configuration.html">Configuration</a></li>
-                <li><a href="installation.html">Installation</a></li>
-                <li><a href="future.html">Future</a></li>
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="installation.html" class="nav-link-getting-started">Installation and getting started</a></li>
                 <li><a href="testing.html">Testing</a></li>
+                <li><a href="future.html">Future</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="main-container">
+        <div class="getting-started-layout">
+        <nav class="getting-started-track" data-step="4" aria-label="Getting started steps">
+            <div class="getting-started-track-head">
+                <h2 class="getting-started-track-heading">Getting started</h2>
+                <p class="getting-started-track-summary">Step 4 of 4 · Configure trains, accessories &amp; panels</p>
+            </div>
+            <div class="gs-progress" aria-hidden="true"><div class="gs-progress-fill"></div></div>
+            <ol class="getting-started-steps">
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="installation.html"><span class="step-name">Installation</span></a>
+                </li>
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="connect.html"><span class="step-name">Connecting your DCC controller</span></a>
+                </li>
+                <li class="getting-started-step is-done">
+                    <a class="step-inner" href="control.html"><span class="step-name">Driving your first train</span></a>
+                </li>
+                <li class="getting-started-step is-current" aria-current="step">
+                    <span class="step-inner"><span class="step-name">Configure trains, accessories &amp; panels</span></span>
+                </li>
+            </ol>
+        </nav>
+        <div class="getting-started-layout-main">
         <div class="full-width-section">
             <h1>Configuration</h1>
             <p><strong>Powerful control without complexity</strong></p>
             <p>One of the defining principles of Panels DCC is that <strong>everything is configured visually</strong>. There is no requirement to write scripts, edit configuration files, or understand complex command structures. If you can drag, drop, and click, you can build and operate a sophisticated DCC layout.</p>
             <p>From trains and accessories to full signalling-style panels, configuration happens directly in the interface, with immediate visual feedback. This makes Panels DCC approachable for beginners, while still offering the depth needed for advanced layouts.</p>
+
+            <h2>Before you create an account or subscription</h2>
+            <p>Cloud-based design and your account work together with <strong>PanelsDCC Connect</strong> and <strong>PanelsDCC Control</strong> on your Raspberry Pi. You should have Connect and Control <strong>installed, working, and verified on your layout</strong> before you create a PanelsDCC account or take out a subscription.</p>
+            <p>That means: your command station is detected and controllable in Connect, and Control shows a healthy connection to Connect so you can drive at least one locomotive and one accessory as expected. If something is wrong locally, fixing it after you subscribe does not change the fact that <strong>it is your responsibility</strong> to ensure your local hardware, wiring, and network are ready before you commit to an account or paid plan.</p>
+            <p>Use these pages in order:</p>
+            <ol class="list-getting-started">
+                <li><a href="installation.html">Installation</a> — install Connect and Control on the Pi.</li>
+                <li><a href="connect.html">Connecting your DCC controller</a> — attach and verify your command station in Connect.</li>
+                <li><a href="control.html">Driving your first train</a> — open Control, check connection status, and confirm basic driving works.</li>
+                <li><a href="configuration.html">Configure trains, accessories &amp; panels</a> — design and sync in PanelsDCC (this page).</li>
+            </ol>
+            <p>Only after that should you create an account and use cloud configuration for trains, accessories, and panels.</p>
         </div>
 
         <hr/>
@@ -146,7 +180,11 @@
             <ul>
                 <li><a href="explore.html">Explore control features →</a></li>
                 <li><a href="installation.html">Get started with installation →</a></li>
+                <li><a href="connect.html">PanelsDCC Connect setup →</a></li>
+                <li><a href="control.html">PanelsDCC Control →</a></li>
             </ul>
+        </div>
+        </div>
         </div>
     </div>
     <script>

@@ -11,23 +11,45 @@
         <div class="nav-container">
             <a href="index.html" class="nav-logo">Panels DCC</a>
             <ul class="nav-links">
-                <li><a href="explore.html">Operation</a></li>
-                <li><a href="configuration.html">Configuration</a></li>
-                <li><a href="installation.html">Installation</a></li>
-                <li><a href="future.html">Future</a></li>
+                <li><a href="explore.html">Explore</a></li>
+                <li><a href="installation.html" class="nav-link-getting-started">Installation and getting started</a></li>
                 <li><a href="testing.html">Testing</a></li>
+                <li><a href="future.html">Future</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="main-container">
-        <div class="full-width-section early-access-banner">
-            <p><strong>Early access status:</strong> PanelsDCC is currently in <strong>Phase&nbsp;1 – Controller Compatibility</strong> of the early access programme, focused on proving PanelsDCC Connect with a wide range of DCC controllers.</p>
-            <p><a href="testing.html">Read about the early access programme and how to get involved in testing →</a></p>
-        </div>
+        <div class="getting-started-layout">
+        <nav class="getting-started-track" data-step="1" aria-label="Getting started steps">
+            <div class="getting-started-track-head">
+                <h2 class="getting-started-track-heading">Getting started</h2>
+                <p class="getting-started-track-summary">Step 1 of 4 · Installation</p>
+            </div>
+            <div class="gs-progress" aria-hidden="true"><div class="gs-progress-fill"></div></div>
+            <ol class="getting-started-steps">
+                <li class="getting-started-step is-current" aria-current="step">
+                    <span class="step-inner"><span class="step-name">Installation</span></span>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="connect.html"><span class="step-name">Connecting your DCC controller</span></a>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="control.html"><span class="step-name">Driving your first train</span></a>
+                </li>
+                <li class="getting-started-step is-todo">
+                    <a class="step-inner" href="configuration.html"><span class="step-name">Configure trains, accessories &amp; panels</span></a>
+                </li>
+            </ol>
+        </nav>
+        <div class="getting-started-layout-main">
 
         <div class="full-width-section">
             <h1>Getting started with PanelsDCC</h1>
+            <div class="early-access-banner">
+                <p><strong>Early access status:</strong> PanelsDCC is currently in <strong>Phase&nbsp;1 – Controller Compatibility</strong> of the early access programme, focused on proving PanelsDCC Connect with a wide range of DCC controllers.</p>
+                <p><a href="testing.html">Read about the early access programme and how to get involved in testing →</a></p>
+            </div>
             <p>PanelsDCC is <strong>not</strong> a traditional desktop application. There's nothing to install on your everyday devices, no operating system dependencies, and no single "control PC" that everything revolves around.</p>
             <p>Instead, PanelsDCC follows a simple three-stage model that mirrors how you set up and run your railway:</p>
             <ul>
@@ -47,13 +69,63 @@
         <hr/>
 
         <div class="full-width-section">
-            <h2>Getting Started in Three Steps</h2>
+            <h2>Installing PanelsDCC Connect and Control on your raspberry pi</h2>
+            <h3>Pre-requisites</h3>
             <ol>
-                <li><strong>Install PanelsDCC Connect</strong> on your Raspberry&nbsp;Pi and test that it can talk to your DCC controller or controllers.</li>
-                <li><strong>Sign up for PanelsDCC</strong>, create your account, download PanelsDCC Control to the Raspberry&nbsp;Pi, create your first train and accessory in PanelsDCC Design, and sync them to PanelsDCC Control.</li>
-                <li><strong>Grow at your own pace</strong> – once the first train and accessory are working, you are ready to scale up to your entire layout.</li>
+                <li>Raspberry PI 4 or later</li>
+                <li>16Gb micro SD card</li>
+                <li>PC with micro SD card reader (SD card adapter)</li>
             </ol>
-            <p>There is some setup to do, but PanelsDCC will guide you through the process.</p>
+            <h3>Installing from blank SD Card</h3>
+            <p>In this process it is recommended to follow the standard <a href="https://www.raspberrypi.com/software/" target="_blank">Raspberry Pi Imager</a> process to install the latest version of Raspberry Pi OS (64 Bit) to the micro SD card. If you are intending to hook up a screen, keyboard and mouse to the raspberry pi, you will need to install the desktop version of Raspberry Pi OS.</p>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open Raspberry Pi Imager.</li>
+                <li>Choose your Raspberry Pi device.</li>
+                <li>Choose OS: <strong>Raspberry Pi OS (64-bit)</strong> (or <strong>Raspberry Pi OS (Desktop)</strong> if you are intending to hook up a screen, keyboard and mouse to the raspberry pi).</li>
+                <li>Choose your SD card, then click <strong>Next</strong>.</li>
+                <li>When asked to apply OS customisation settings, click <strong>Edit Settings</strong>.</li>
+                <li>Go to the <strong>General</strong> tab and complete hostname, username/password, Wi-Fi, locale, and timezone.</li>
+                <li>For hostname, we recommend <strong>panels-dcc</strong> so your URLs are easy to remember.</li>
+                <li>Go to the <strong>Services</strong> tab and enable SSH if you want remote access. (for power users only)</li>
+                <li>Go to the <strong>Options</strong> tab and enable a first-boot script / run command field (wording may vary by Imager version).</li>
+                <li>Paste this command into that first-boot command field:</li>
+            </ol>
+            <pre><code>curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
+            <ol start="11">
+                <li>Save settings and write the image.</li>
+                <li>On first boot, give it a few minutes to complete installation.</li>
+            </ol>
+            <p>After first boot, wait a few minutes for the install to complete, then continue with the post-install checks below.</p>
+            <h3>Already running Raspberry Pi OS? Install with one command</h3>
+            <p>If your Pi is already set up, use this command to install the latest releases of <strong>both</strong> PanelsDCC Connect and PanelsDCC Control.</p>
+            <ol>
+                <li>Make sure the Pi has internet access.</li>
+                <li>Open a terminal on the Pi (or SSH in).</li>
+                <li>Copy and run:</li>
+            </ol>
+            <pre><code>curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
+            <p>The script downloads the latest packages and installs everything automatically.</p>
+        </div>
+        <hr/>
+        <div class="full-width-section">
+            <h2>Post-install checks</h2>
+            <p>If you set hostname to <strong>panels-dcc</strong>, use these URLs. If you chose a different hostname, replace it below.</p>
+            <ol>
+                <li>Open Connect: <code>http://&lt;hostname&gt;:9000/</code></li>
+                <li>Open Control: <code>http://&lt;hostname&gt;/</code></li>
+            </ol>
+            <p>Once you have confirmed the installation, continue to <a href="connect.html">PanelsDCC Connect setup</a> and connect your controller.</p>
+        </div>
+        <hr/>
+        <div class="full-width-section">
+            <h2>Using the Pi directly (screen, keyboard, mouse)</h2>
+            <p>You can use PanelsDCC directly on the Raspberry Pi desktop if remote access is not available.</p>
+            <ul>
+                <li>Plug a screen, keyboard, and mouse into the Pi.</li>
+                <li>After install, open the desktop shortcuts for <strong>PanelsDCC Connect</strong> and <strong>PanelsDCC Control</strong>.</li>
+            </ul>
+            <p>This is especially useful for changing network setup in Connect, for example switching between home Wi-Fi client mode and offline hotspot mode.</p>
         </div>
         <hr/>
         <div class="full-width-section">
@@ -68,6 +140,8 @@
             </ul>
         </div>
 
+        </div>
+        </div>
     </div>
 </body>
 </html>

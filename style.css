@@ -284,6 +284,329 @@ hr::before {
 
 .nav-links a:hover {
     color: var(--links);
+    text-decoration: none;
+}
+
+/* Nav: long “Installation and getting started” link */
+.nav-link-getting-started {
+    line-height: 1.25;
+    max-width: 12rem;
+    text-align: center;
+}
+
+@media (min-width: 900px) {
+    .nav-link-getting-started {
+        max-width: none;
+        white-space: nowrap;
+    }
+}
+
+/* Getting started step track (Installation → Connect → Control → Configuration) */
+.getting-started-track {
+    margin: 0 0 2rem;
+    padding: 1.35rem 1.5rem 1.5rem;
+    background: var(--background-body);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+    .getting-started-track {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    }
+}
+
+.getting-started-track-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.getting-started-track-heading {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+}
+
+.getting-started-track-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Progress rail */
+.gs-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--border);
+    margin: 0 0 1.35rem;
+    overflow: hidden;
+}
+
+.gs-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--links);
+    transition: width 0.35s ease;
+}
+
+.getting-started-track[data-step="1"] .gs-progress-fill {
+    width: 25%;
+}
+
+.getting-started-track[data-step="2"] .gs-progress-fill {
+    width: 50%;
+}
+
+.getting-started-track[data-step="3"] .gs-progress-fill {
+    width: 75%;
+}
+
+.getting-started-track[data-step="4"] .gs-progress-fill {
+    width: 100%;
+}
+
+.getting-started-steps {
+    counter-reset: gs-step;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-items: start;
+}
+
+.getting-started-step {
+    counter-increment: gs-step;
+    margin: 0;
+    min-width: 0;
+}
+
+.step-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+    padding: 0.4rem 0.2rem;
+    border-radius: 8px;
+    transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.step-inner::before {
+    content: counter(gs-step);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    border: 2px solid var(--border);
+    background: var(--background-alt);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+a.step-inner:hover {
+    background: var(--background-alt);
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+a.step-inner:hover .step-name {
+    color: var(--links);
+}
+
+a.step-inner:focus {
+    outline: none;
+}
+
+a.step-inner:focus-visible {
+    outline: 2px solid var(--links);
+    outline-offset: 3px;
+    border-radius: 10px;
+}
+
+.step-name {
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--text-main);
+    word-break: break-word;
+    max-width: 13rem;
+}
+
+/* Completed */
+.getting-started-step.is-done .step-inner::before {
+    content: "✓";
+    border-color: transparent;
+    background: var(--links);
+    color: #fff;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.getting-started-step.is-done .step-name {
+    color: var(--text-main);
+}
+
+/* Current */
+.getting-started-step.is-current .step-inner {
+    background: var(--background-alt);
+}
+
+.getting-started-step.is-current .step-inner::before {
+    border-color: var(--links);
+    background: var(--background-body);
+    color: var(--links);
+    box-shadow: 0 0 0 3px var(--focus);
+}
+
+.getting-started-step.is-current .step-name {
+    color: var(--text-bright);
+    font-weight: 600;
+}
+
+/* Upcoming */
+.getting-started-step.is-todo .step-inner::before {
+    border-style: dashed;
+    opacity: 0.95;
+}
+
+.getting-started-step.is-todo .step-name {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    .getting-started-steps {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .getting-started-track {
+        padding: 1.1rem 1.1rem 1.25rem;
+    }
+
+    .getting-started-track-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Getting started: sidebar on wide screens, stacked on mobile */
+.getting-started-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+    width: 100%;
+}
+
+.getting-started-layout-main {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+/* First section in the main column: drop top margin so it lines up with the sidebar (do not strip padding — keeps banner box/border intact) */
+.getting-started-layout-main > .full-width-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.full-width-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* Desktop: fixed-width sidebar left, main content right (flex is more reliable than grid here) */
+@media (min-width: 769px) {
+    .getting-started-layout {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        gap: 0 2rem;
+    }
+
+    .getting-started-layout .getting-started-track {
+        flex: 0 0 15rem;
+        flex-shrink: 0;
+        width: 15rem;
+        max-width: 15rem;
+        margin: 0;
+        position: sticky;
+        top: 5rem;
+        align-self: flex-start;
+        padding: 1rem 1rem 1.2rem;
+        box-sizing: border-box;
+    }
+
+    .getting-started-layout-main {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .getting-started-layout .getting-started-steps {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .getting-started-layout .getting-started-track-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .getting-started-layout .getting-started-track-heading {
+        font-size: 1.05rem;
+        line-height: 1.25;
+    }
+
+    .getting-started-layout .getting-started-track-summary {
+        font-size: 0.8rem;
+        line-height: 1.35;
+    }
+
+    .getting-started-layout .gs-progress {
+        margin-bottom: 1rem;
+    }
+
+    .getting-started-layout .getting-started-step .step-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 0.65rem;
+        padding: 0.4rem 0.15rem;
+    }
+
+    .getting-started-layout .step-name {
+        max-width: none;
+        text-align: left;
+    }
+}
+
+/* Prose lists (e.g. getting started on configuration) */
+ol.list-getting-started {
+    margin: 0.5rem 0 1rem;
+    padding-left: 1.35rem;
+}
+
+ol.list-getting-started li {
+    margin: 0.35rem 0;
 }
 
 /* Main content container */
@@ -392,7 +715,7 @@ a:hover {
         justify-content: center;
         gap: 1rem;
     }
-    
+
     .main-container {
         padding: 1rem;
     }
