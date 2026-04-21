@@ -1,0 +1,24 @@
+<%_
+const _pph = typeof pagerPrevHref !== 'undefined' && pagerPrevHref;
+const _ppt = typeof pagerPrevTitle !== 'undefined' ? pagerPrevTitle : '';
+const _pnh = typeof pagerNextHref !== 'undefined' && pagerNextHref;
+const _pnt = typeof pagerNextTitle !== 'undefined' ? pagerNextTitle : '';
+_%>
+<nav class="gs-pager" aria-label="Getting started sequence">
+    <div class="gs-pager-slot gs-pager-slot--prev">
+        <% if (_pph) { %>
+        <a href="<%= pagerPrevHref %>" class="gs-pager-link gs-pager-link--prev">
+            <span class="gs-pager-kicker">← Previous</span>
+            <span class="gs-pager-title"><%= _ppt %></span>
+        </a>
+        <% } %>
+    </div>
+    <div class="gs-pager-slot gs-pager-slot--next">
+        <% if (_pnh) { %>
+        <a href="<%= pagerNextHref %>" class="gs-pager-link gs-pager-link--next">
+            <span class="gs-pager-kicker">Next →</span>
+            <span class="gs-pager-title"><%= _pnt %></span>
+        </a>
+        <% } %>
+    </div>
+</nav>

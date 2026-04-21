@@ -1,0 +1,90 @@
+<%- include('layout-start.ejs', { title: 'Getting Started — PanelsDCC', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+        <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, step: 1, manualChapter: 1 }) %>
+        <div class="getting-started-layout-main">
+
+        <div class="full-width-section">
+            <h1>Getting started with PanelsDCC</h1>
+            <p>PanelsDCC is <strong>not</strong> a traditional desktop application, neither is it an iOS or Android app. Configuration is cloud based while control is local and accessible from any device with a web browser connected to PanelsDCC Control.</p>
+            <p><strong>What you need</strong></p>
+            <ul>
+                <li><strong>A Raspberry&nbsp;Pi</strong> on your layout, with PanelsDCC Control and PanelsDCC Connect installed.</li>
+                <li><strong>A supported DCC command station</strong>, physically connected to the Raspberry&nbsp;Pi. Currently <a href="https://dcc-ex.com/ex-csb1/index.html#gsc.tab=0" target="_blank">DCC-EX</a> (via USB) and <a href="https://uk.hornby.com/products/elite-digital-controller-r8214" target="_blank">Hornby Elite (via USB)</a> are known working. See <a href="<%= basePath %>/getting-started/connect.html">Connecting your DCC controller/s</a> for more information.</li>
+                <li><strong>Your own devices</strong> – phones, tablets, laptops, desktops – with a modern web browser to connect to the Raspberry&nbsp;Pi over your network.</li>
+                <li><strong>A PanelsDCC account</strong> so you can configure trains, accessories, and panels.</li>
+            </ul>
+
+            <h2>Step 1: Install PanelsDCC Connect and Control</h2>
+            <p>Install both apps on your Raspberry Pi — either from a fresh OS image or on an existing Raspberry Pi OS system.</p>
+
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Raspberry Pi 4 or later</li>
+                <li>16&nbsp;GB microSD card</li>
+                <li>PC with microSD reader (or adapter)</li>
+            </ul>
+
+            <h3>Option A: New SD card with Raspberry Pi Imager</h3>
+            <p>Follow the standard <a href="https://www.raspberrypi.com/software/" target="_blank">Raspberry Pi Imager</a> flow for the latest <strong>Raspberry Pi OS (64-bit)</strong>. Choose <strong>Raspberry Pi OS (Desktop)</strong> if you plan to use a screen, keyboard, and mouse on the Pi.</p>
+            <p><strong>In Imager, step by step:</strong></p>
+            <ol>
+                <li>Open Raspberry Pi Imager.</li>
+                <li>Choose your Raspberry Pi device.</li>
+                <li>Choose the OS (64-bit; Desktop if you need a local GUI).</li>
+                <li>Choose your SD card, then click <strong>Next</strong>.</li>
+                <li>When asked about OS customisation, click <strong>Edit Settings</strong>.</li>
+                <li>On the <strong>General</strong> tab, set hostname, username/password, Wi‑Fi, locale, and timezone.</li>
+                <li>For hostname, we recommend <strong>panels-dcc</strong> so your URLs are easy to remember.</li>
+                <li>On the <strong>Services</strong> tab, enable SSH if you want remote access (optional).</li>
+                <li>On the <strong>Options</strong> tab (wording may vary), enable the first-boot command / run command field.</li>
+                <li>Paste this into that field:</li>
+            </ol>
+            <div class="install-command-block">
+                <pre class="install-command" tabindex="0"><code class="install-command-code">curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
+            </div>
+            <ol start="11">
+                <li>Save settings and write the image to the card.</li>
+                <li>Boot the Pi and wait a few minutes for first-boot install to finish.</li>
+            </ol>
+            <p>When the install script completes, continue to <strong>Step 2</strong>.</p>
+
+            <h3>Option B: Pi already running Raspberry Pi OS</h3>
+            <p>If the Pi is already set up, install the latest <strong>PanelsDCC Connect</strong> and <strong>PanelsDCC Control</strong> with one command:</p>
+            <ol>
+                <li>Ensure the Pi has internet access.</li>
+                <li>Open a terminal on the Pi (or SSH in).</li>
+                <li>Run:</li>
+            </ol>
+            <div class="install-command-block">
+                <pre class="install-command" tabindex="0"><code class="install-command-code">curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
+            </div>
+            <p>The script downloads and installs everything automatically. Then continue to <strong>Step 2</strong>.</p>
+
+            <h2>Step 2: Post-install checks</h2>
+            <%- include('local-panels-urls.ejs', {
+                localPanelsHeading: 'Post-install: open in your browser',
+                localPanelsLead: 'On a phone, laptop, or the Pi — stay on the same network as the Raspberry Pi. Confirm both Connect (port 9000) and Control (default port) load before continuing.'
+            }) %>
+            <p>Once that works, continue to <a href="<%= basePath %>/getting-started/wifi.html">Configure Wi‑Fi</a>, then the <a href="<%= basePath %>/manual/index.html">manual</a> getting-started path (controllers, first train, <a href="<%= basePath %>/getting-started/account.html">your PanelsDCC account</a>). When that checklist is complete, move on to <a href="<%= basePath %>/configuration/index.html">Chapter 2 — Configuration</a> for cloud layout design.</p>
+
+            <h2>Step 3: Using the Pi directly (optional)</h2>
+            <p>If you prefer not to use another device on the network, you can run everything on the Pi itself.</p>
+            <ul>
+                <li>Connect a screen, keyboard, and mouse to the Pi.</li>
+                <li>After install, use the desktop shortcuts for <strong>PanelsDCC Connect</strong> and <strong>PanelsDCC Control</strong>.</li>
+            </ul>
+            <p>That is especially useful for changing network setup in Connect (for example switching between home Wi‑Fi and hotspot mode).</p>
+
+            <%- include('getting-started-pager.ejs', {
+                pagerPrevHref: basePath + '/index.html',
+                pagerPrevTitle: 'Panels DCC home',
+                pagerNextHref: basePath + '/getting-started/wifi.html',
+                pagerNextTitle: 'Configure Wi‑Fi'
+            }) %>
+        </div>
+
+        </div>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>

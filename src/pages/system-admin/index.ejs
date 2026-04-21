@@ -1,0 +1,48 @@
+<%- include('layout-start.ejs', { title: 'System admin — PanelsDCC Manual', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 4 }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <div class="section-text">
+                    <h1>Chapter 4 — System admin</h1>
+                    <p>Account, data sync, networking, and software updates around PanelsDCC. Content in this chapter will expand over time.</p>
+                </div>
+            </div>
+            <hr/>
+            <div class="full-width-section" id="profile-and-devices">
+                <div class="section-text">
+                    <h2>Your profile and devices</h2>
+                    <p>Manage your PanelsDCC account and authorised devices here as features become available.</p>
+                </div>
+            </div>
+            <hr/>
+            <div class="full-width-section" id="syncing-data">
+                <div class="section-text">
+                    <h2>Syncing data</h2>
+                    <p>Configuration is authored in the cloud and synced to your layout runtime; this section will describe sync behaviour and troubleshooting.</p>
+                </div>
+            </div>
+            <hr/>
+            <div class="full-width-section" id="wifi-configuration">
+                <div class="section-text">
+                    <h2>Wi‑Fi configuration</h2>
+                    <p>For day-to-day Wi‑Fi and hotspot use in PanelsDCC Connect, see <a href="<%= basePath %>/getting-started/wifi.html">Getting started — Configure Wi‑Fi</a> and the Wi‑Fi tab in Connect.</p>
+                </div>
+            </div>
+            <hr/>
+            <div class="full-width-section" id="update-management">
+                <div class="section-text">
+                    <h2>Update management</h2>
+                    <p>PanelsDCC packages are installed on the Raspberry Pi. Re-run the install script or use your package flow when updates are published:</p>
+                    <pre><code>curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
+                </div>
+            </div>
+            <hr/>
+            <div class="full-width-section">
+                <p><a href="<%= basePath %>/manual/index.html">← Manual overview</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>

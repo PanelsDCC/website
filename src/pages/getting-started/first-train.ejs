@@ -1,0 +1,56 @@
+<%- include('layout-start.ejs', { title: 'Driving your first train — PanelsDCC', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+        <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, step: 4, manualChapter: 1 }) %>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Driving your first train</h1>
+            
+            <h2>Step 1: Open PanelsDCC Control</h2>
+            <%- include('local-panels-urls.ejs', {
+                localPanelsHeading: 'PanelsDCC Control',
+                localPanelsLead: 'Driving happens here — not on port 9000 (that is Connect, for setup).',
+                localPanelsShowConnect: false,
+                localPanelsEmphasis: 'control'
+            }) %>
+
+            <h2>Step 2: Install as a PWA on phone or tablet (recommended)</h2>
+            <p>If you use Control on a phone or tablet, installing as a <strong>Progressive Web App (PWA)</strong> makes it easier to return to the layout.</p>
+            <p><strong>iPhone / iPad (Safari):</strong> open PanelsDCC Control, tap <strong>Share</strong>, <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</p>
+            <p><strong>Android (Chrome):</strong> open Control, tap the menu (<strong>...</strong>), then <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+
+            <h2>Step 3: First launch and login</h2>
+            <p>When Control loads, it may ask you to log in to a PanelsDCC account.</p>
+            <p>You can <strong>skip</strong> login and operate trains only — useful to prove everything works before you create an account.</p>
+
+            <h2>Step 4: Connection status</h2>
+            <p>Check the strip at the top of Control:</p>
+            <ul>
+                <li><strong>Ready</strong> — connected to PanelsDCC Connect, with a controller detected.</li>
+                <li><strong>No controllers</strong> — Connect is reachable but no command station is detected. See <a href="<%= basePath %>/getting-started/connect.html">Connecting your DCC controller/s</a>.</li>
+                <li><strong>Offline</strong> — this device cannot reach Connect (network or URL).</li>
+            </ul>
+
+            <h2>Quick test: drive without logging in</h2>
+            <ol>
+                <li>Open <strong>Trains</strong>.</li>
+                <li>Choose <strong>Select by DCC number</strong>.</li>
+                <li>Enter your locomotive’s DCC address.</li>
+                <li>Set speed and direction; try the function buttons.</li>
+            </ol>
+            <p>If nothing moves, re-check status above or <a href="<%= basePath %>/getting-started/connect.html">Connect setup</a>.</p>
+
+            <h2>Next steps</h2>
+            <p>When driving works, continue to <strong><a href="<%= basePath %>/getting-started/account.html">Your PanelsDCC account</a></strong> (step&nbsp;5) so you can sign in and link cloud configuration. After that, <a href="<%= basePath %>/configuration/index.html">Chapter 2 — Configuration</a> covers layout design in the cloud; day‑to‑day operation reference is <a href="<%= basePath %>/control/index.html">Chapter 3 — Control</a>.</p>
+
+            <%- include('getting-started-pager.ejs', {
+                pagerPrevHref: basePath + '/getting-started/connect.html',
+                pagerPrevTitle: 'Connecting your DCC controller/s',
+                pagerNextHref: basePath + '/getting-started/account.html',
+                pagerNextTitle: 'Your PanelsDCC account'
+            }) %>
+        </div>
+        </div>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>

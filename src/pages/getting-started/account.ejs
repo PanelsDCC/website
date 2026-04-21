@@ -1,0 +1,46 @@
+<%- include('layout-start.ejs', { title: 'Your PanelsDCC account — getting started', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+        <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, step: 5, manualChapter: 1 }) %>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Your PanelsDCC account</h1>
+            <p>Create an account on the <strong>Panels DCC website</strong> so cloud configuration and your layout can be tied to your Pi and command station.</p>
+
+            <h2>Step 1: Register on the Panels DCC website</h2>
+            <p>Open the web app in a browser (your PC, tablet, or phone is fine — it does not have to be on the layout network).</p>
+            <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>" target="_blank" rel="noopener noreferrer">Open Panels DCC website</a></p>
+            <p>Follow the on-screen instructions to <strong>create an account</strong> (register). Complete any email verification the site asks for.</p>
+
+            <h2>Step 2: Sign in from PanelsDCC Control</h2>
+            <p>On a device on your <strong>layout network</strong>, open <strong>PanelsDCC Control</strong> on your Pi. Use the hostname below (no <code>:9000</code> in the URL for Control).</p>
+            <%- include('local-panels-urls.ejs', {
+                localPanelsHeading: 'PanelsDCC Control',
+                localPanelsLead: 'Sign in from Control (no port in the URL). The hostname is saved in this browser like on other getting started pages.',
+                localPanelsShowConnect: false,
+                localPanelsEmphasis: 'control'
+            }) %>
+            <p>Open <strong>Settings</strong>, then use <strong>Log in</strong> (or any login prompts Control shows) and sign in with the account you just created.</p>
+
+            <h2>Step 3: Confirm you are signed in</h2>
+            <p>Stay in <strong>Settings</strong> after logging in. You should see your account reflected there — for example your signed-in identity or account status (exact wording can change with app updates). If Control does not accept your credentials, double-check the site registration completed and try again.</p>
+
+            <h2>Step 4: Check your profile and controller</h2>
+            <p>Return to the <strong>Panels DCC website</strong> in a browser and open your <strong>profile</strong>:</p>
+            <p><a href="<%= panelsAppOrigin %>/auth/profile" target="_blank" rel="noopener noreferrer"><%= panelsAppOrigin %>/auth/profile</a></p>
+            <p>With your <strong>DCC command station plugged in and powered on</strong>, and Connect running as in earlier steps, your profile should list your <strong>controller</strong> and confirm that a DCC controller has been detected. If nothing appears, check Connect, wiring, and power, then refresh — the device must be present for detection to show.</p>
+
+            <h2>Next steps</h2>
+            <p>When you are happy with your account and hardware showing correctly, move on to <strong><a href="<%= basePath %>/configuration/index.html">Chapter 2 — Configuration</a></strong> to design trains, accessories, and panels in the cloud.</p>
+
+            <%- include('getting-started-pager.ejs', {
+                pagerPrevHref: basePath + '/getting-started/first-train.html',
+                pagerPrevTitle: 'Driving your first train',
+                pagerNextHref: basePath + '/configuration/index.html',
+                pagerNextTitle: 'Chapter 2 — Configuration'
+            }) %>
+        </div>
+        </div>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>

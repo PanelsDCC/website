@@ -1,0 +1,109 @@
+<%- include('layout-start.ejs', { title: 'Introducing Panels DCC', basePath, activeNav: 'explore' }) %>
+<div class="main-container">
+        <div class="full-width-section">
+            <div class="section-text">
+                <h1>Introducing Panels DCC</h1>
+                <p>Panels DCC is a flexible control system for Digital Command Control layouts, designed to bring together <strong>train driving</strong>, <strong>accessory operation</strong>, and <strong>route-based panel control</strong> into a single, coherent experience.</p>
+                <p>Whether you want hands-on driving, realistic signal-box style operation, or a hybrid of both, Panels DCC adapts to how <em>you</em> want to run your railway.</p>
+                <p>Panels DCC adapts seamlessly across <strong>mobile phones, tablets, and desktops</strong>. Multiple clients can run simultaneously with live state synchronization — changes on one device appear instantly on all others.</p>
+            </div>
+            <div class="section-media section-media-fullwidth">
+                <img src="<%= basePath %>/images/panel-demo.png" alt="Panel-Based Control Interface" class="section-media-img"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section">
+            <div class="section-text">
+                <h2>Train Operation</h2>
+                <p><strong>Drive trains, not menus</strong></p>
+                <p>Panels DCC provides intuitive control of locomotives with clear visibility of speed, direction, and functions. Decoder functions such as lights and sound are shown as icons, so you can operate at a glance. State is synchronised across multiple devices, so you can switch between tablets, phones, or desktops and keep flexible control without losing context.</p>
+                <p>Key capabilities include:</p>
+                <ul>
+                    <li>Independent control of multiple locomotives</li>
+                    <li>Smooth speed and direction control</li>
+                    <li>Function icons for lights, sound, and auxiliary features</li>
+                    <li>Clear feedback on train state, even when operating several trains at once</li>
+                    <li>Sync across devices for flexible operation from anywhere on the layout</li>
+                    <li>Child lock mode, enabling you to disable/limit throttle and function access (while still being able to control these on another device!)</li>
+                </ul>
+            </div>
+            <div class="section-media">
+                <img src="<%= basePath %>/images/train-control.png" alt="Train Operation Interface" class="section-media-img"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section reverse">
+            <div class="section-text">
+                <h2>Accessory Operation</h2>
+                <p><strong>Points, signals, and layout features — all in one place</strong></p>
+                <p>Beyond train control, Panels DCC gives you centralised control of layout accessories.</p>
+                <p>Turnouts, signals, lighting, and other accessories are presented as first-class elements of the system, not afterthoughts. Each accessory can be controlled directly or grouped logically to create routes.</p>
+                <p>This allows you to:</p>
+                <ul>
+                    <li>Throw points and set signals with confidence</li>
+                    <li>See the current state of accessories at a glance</li>
+                    <li>Reduce operational errors during busy running sessions</li>
+                    <li>Build layouts that behave consistently and predictably</li>
+                </ul>
+                <p>Accessory control is designed to scale — from a small shunting plank to a complex multi-station layout.</p>
+            </div>
+            <div class="section-media">
+                <img src="<%= basePath %>/images/accessory-control.png" alt="Accessory Control Interface" class="section-media-img"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section content-section-stacked">
+            <div class="section-text">
+                <h2>Panel-Based Control</h2>
+                <p><strong>Operate your layout like a real signal box</strong></p>
+                <p>One of the defining features of Panels DCC is its support for <strong>graphical control panels</strong> inspired by real railway signalling diagrams.</p>
+                <p>Instead of thinking in terms of addresses and commands, you operate the railway visually:</p>
+                <ul>
+                    <li>Tracks are shown as lines</li>
+                    <li>Points and signals appear where they exist on the layout</li>
+                    <li>Routes are set by interacting with the panel, not by operating each component individually</li>
+                </ul>
+                <p>This approach makes operation more realistic, more intuitive, and far more engaging — especially when running complex movements or timetabled sessions.</p>
+                <p>Panel-based control also supports:</p>
+                <ul>
+                    <li>Route setting via accessory combinations (macros)</li>
+                    <li>Clear indication of route status</li>
+                    <li>A shared visual reference for multiple operators</li>
+                    <li>Train operation overlays for driving trains without changing screen</li>
+                </ul>
+            </div>
+            <div class="section-media section-media-fullwidth">
+                <img src="<%= basePath %>/images/panel-demo.png" alt="Panel-Based Control Interface" class="section-media-img"/>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <div class="section-text">
+                <h2>Cloud Configuration, Flexible Operation</h2>
+                <p>Panels DCC is configured in the cloud. That gives you a single, resilient place to edit and view your layout, set up panels, and configure trains — from anywhere, with no need to be at the layout. When you are ready to operate, your configuration is <strong>synced to your local control application</strong>.</p>
+                <p>From there, you can operate your layout online or offline. So you design and prepare in the cloud, then run the railway however your venue and connectivity allow — same interface, same behaviour.</p>
+                <p>Read more about the architecture and how to get started <a href="<%= basePath %>/getting-started/installation.html">here</a>.</p>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h3>Next steps:</h3>
+            <ul>
+                <li><a href="<%= basePath %>/configuration/index.html">Learn about visual configuration →</a></li>
+                <li><a href="<%= basePath %>/getting-started/installation.html">Find out how to get started →</a></li>
+                <li><a href="<%= basePath %>/future.html">See what's coming in the future →</a></li>
+            </ul>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>
+

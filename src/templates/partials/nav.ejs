@@ -1,0 +1,11 @@
+<nav class="nav">
+    <div class="nav-container">
+        <a href="<%= basePath %>/index.html" class="nav-logo">Panels DCC</a>
+        <ul class="nav-links">
+            <li><a href="<%= basePath %>/explore.html" class="<%= typeof activeNav !== 'undefined' && activeNav === 'explore' ? 'nav-link-active' : '' %>">Explore</a></li>
+            <li><a href="<%= basePath %>/getting-started/installation.html" class="nav-link-getting-started<%= typeof activeNav !== 'undefined' && activeNav === 'getting-started' ? ' nav-link-active' : '' %>">Getting started &amp; manual</a></li>
+            <li><a href="<%= basePath %>/testing.html" class="<%= typeof activeNav !== 'undefined' && activeNav === 'testing' ? 'nav-link-active' : '' %>">Testing</a></li>
+            <li><a href="<%= basePath %>/future.html" class="<%= typeof activeNav !== 'undefined' && activeNav === 'future' ? 'nav-link-active' : '' %>">Future</a></li>
+        </ul>
+    </div>
+</nav>

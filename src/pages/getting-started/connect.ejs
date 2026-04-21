@@ -1,0 +1,115 @@
+<%- include('layout-start.ejs', { title: 'PanelsDCC Connect Setup', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+        <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, step: 3, manualChapter: 1 }) %>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Connecting your DCC controller/s</h1>
+            <aside class="doc-tip-banner" role="note" aria-label="DCC-EX and Hornby Elite">
+                <p><strong>Using DCC-EX CSB1 (USB) or Hornby Elite (USB)?</strong> Connect can often set itself up with <strong>zero configuration</strong> — plug in the USB cable, power the command station, and start Connect. If it comes up connected, you may not need the manual steps at all. Skip ahead to confirmation or skim the sections below only if something does not auto-detect.</p>
+            </aside>
+            <h2>Step 1: Open PanelsDCC Connect</h2>
+            <p>On your layout network, use the address with <strong>port 9000</strong> (or the desktop shortcut on the Pi). Wi‑Fi details are on the <a href="<%= basePath %>/getting-started/wifi.html">Configure Wi‑Fi</a> page if you need them first.</p>
+            <%- include('local-panels-urls.ejs', {
+                localPanelsHeading: 'Open Connect on your network',
+                localPanelsLead: 'Port 9000 — on the Raspberry Pi desktop you can also launch the PanelsDCC Connect shortcut.',
+                localPanelsShowControl: false,
+                localPanelsEmphasis: 'connect'
+            }) %>
+
+            <h2>Step 2: Plug in and attach your hardware</h2>
+            <p>Physically connect your command station to the Pi (usually USB for the setups we document). Power on the command station.</p>
+            <p><strong>DCC-EX CSB1 via USB</strong> (<code>dccpp-ex-usb</code>) and <strong>Hornby Elite / XpressNet</strong> via USB (<code>xnet-elite</code>) are <strong>implemented and working</strong> in Connect with <strong>zero-configuration</strong> support when detection succeeds — the connection is created for you and should show as connected. Other controllers use the same connection machinery; see the table below for status.</p>
+            <p><strong>NCE PowerCab</strong> (serial or USB) and <strong>DCC++ over Ethernet</strong> are available to configure in Connect but are marked <strong>untested</strong> in our wider programme — you may get auto-detection or you may need the manual flow in Step&nbsp;3. If you rely on an untested path, read the <a href="<%= basePath %>/testing.html">testing page</a> first.</p>
+
+            <h3>Controller support reference</h3>
+            <p>The <strong>Zero configuration</strong> column shows whether Connect can detect and set up the device automatically. <strong>Untested</strong> means we still need more real‑world reports — plan on manual setup if auto-detection does not appear.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Controller</th>
+                        <th>Implemented in PanelsDCC Connect</th>
+                        <th>Status</th>
+                        <th>Zero configuration</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hornby Elite / XpressNet</strong> (<code>xnet-elite</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Working</strong></td>
+                        <td>Yes</td>
+                        <td>Auto-detects and should appear as connected when attached.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCC-EX CSB1 (USB)</strong> (<code>dccpp-ex-usb</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Working</strong></td>
+                        <td>Yes</td>
+                        <td>Fully tested via USB.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (serial)</strong> (<code>nce-serial</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (USB)</strong> (<code>nce-usb</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCC++ (Ethernet)</strong> (<code>dccpp-ethernet</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td>Untested</td>
+                        <td>Set up manually in Connect.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Controllers listed as untested are implemented in software but still need wider validation in the field.</p>
+
+            <h2>Step 3: Manual setup (only if you need it)</h2>
+            <p>If Connect did not create a working connection automatically, create one explicitly:</p>
+            <ul>
+                <li><strong>Auto-detected device:</strong> when detection works, configuration is applied for you — you should see it listed as connected.</li>
+                <li><strong>Manual setup:</strong> choose <strong>Create connection</strong> (or equivalent), then fill in connection type, port, baud, etc., as Connect asks.</li>
+            </ul>
+            <p>For a manual connection, you will typically enter:</p>
+            <ul>
+                <li>Connection ID (example: <code>elite1</code>)</li>
+                <li>Controller type (example: <code>Hornby Elite / XpressNet</code>)</li>
+                <li>Port (serial/USB) or host and port (network)</li>
+                <li>Baud rate and flow control where serial is involved</li>
+                <li>Confirm or <strong>Create connection</strong></li>
+            </ul>
+
+            <h2>Step 4: Assign controller role (optional)</h2>
+            <p>Skip this if you only run <strong>one</strong> command station.</p>
+            <p>If you use <strong>two</strong> controllers (for example one for trains and one for an accessory bus), check how Connect has assigned <strong>roles</strong>: a second connection is typically treated as the accessories controller. Review role assignment whenever you power on hardware or after updates.</p>
+
+            <h2>Step 5: Confirm everything works</h2>
+            <p>In Connect, verify:</p>
+            <ol>
+                <li>Your command station appears as connected with manufacturer/version information where available.</li>
+                <li>You can run one locomotive movement and one function (where possible).</li>
+                <li>You can operate one accessory (typically a point).</li>
+            </ol>
+            <p>When that looks good, continue to driving from <strong>PanelsDCC Control</strong> in the next getting started step.</p>
+
+            <%- include('getting-started-pager.ejs', {
+                pagerPrevHref: basePath + '/getting-started/wifi.html',
+                pagerPrevTitle: 'Configure Wi‑Fi',
+                pagerNextHref: basePath + '/getting-started/first-train.html',
+                pagerNextTitle: 'Driving your first train'
+            }) %>
+        </div>
+        </div>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>

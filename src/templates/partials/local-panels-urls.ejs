@@ -1,0 +1,90 @@
+<%_
+const lpHeading = typeof localPanelsHeading !== 'undefined' ? localPanelsHeading : 'Your Raspberry Pi on the network';
+const lpLead = typeof localPanelsLead !== 'undefined' ? localPanelsLead : null;
+const lpShowConnect = typeof localPanelsShowConnect === 'undefined' ? true : !!localPanelsShowConnect;
+const lpShowControl = typeof localPanelsShowControl === 'undefined' ? true : !!localPanelsShowControl;
+const lpEmphasis = typeof localPanelsEmphasis !== 'undefined' && localPanelsEmphasis ? String(localPanelsEmphasis).replace(/[^a-z]/gi, '') : '';
+_%>
+<div class="local-panels-urls<%= lpEmphasis ? ' local-panels-urls--emphasis-' + lpEmphasis : '' %>" data-local-panels-urls>
+    <h3 class="local-panels-urls-heading"><%= lpHeading %></h3>
+    <% if (lpLead) { %><p class="local-panels-urls-lead"><%= lpLead %></p><% } %>
+    <label class="local-panels-urls-field">
+        <span class="local-panels-urls-label">Hostname of your Pi</span>
+        <input type="text" class="local-panels-urls-input" data-local-panels-hostname inputmode="text" autocomplete="off" spellcheck="false" placeholder="panels-dcc" />
+    </label>
+    <p class="local-panels-urls-hint">Use the same hostname as in Raspberry Pi Imager (we recommend <strong>panels-dcc</strong>). You can also enter a <code>.local</code> name or IP address. Your choice is saved in this browser.</p>
+    <div class="local-panels-urls-rows">
+        <% if (lpShowConnect) { %>
+        <div class="local-panels-urls-row local-panels-urls-row--connect">
+            <div class="local-panels-urls-row-top">
+                <span class="local-panels-urls-badge">PanelsDCC Connect</span>
+                <span class="local-panels-urls-meta">port 9000</span>
+            </div>
+            <p class="local-panels-urls-desc">Wi‑Fi, DCC hardware, controller connections.</p>
+            <p class="local-panels-urls-url"><code data-local-display-connect>http://panels-dcc:9000/</code></p>
+            <a class="btn btn-primary local-panels-urls-btn" data-local-link-connect href="http://panels-dcc:9000/" target="_blank" rel="noopener noreferrer">Open Connect</a>
+        </div>
+        <% } %>
+        <% if (lpShowControl) { %>
+        <div class="local-panels-urls-row local-panels-urls-row--control">
+            <div class="local-panels-urls-row-top">
+                <span class="local-panels-urls-badge">PanelsDCC Control</span>
+                <span class="local-panels-urls-meta">port 80 (default)</span>
+            </div>
+            <p class="local-panels-urls-desc">Run trains and panels in the browser — no port in the URL.</p>
+            <p class="local-panels-urls-url"><code data-local-display-control>http://panels-dcc/</code></p>
+            <a class="btn btn-primary local-panels-urls-btn" data-local-link-control href="http://panels-dcc/" target="_blank" rel="noopener noreferrer">Open Control</a>
+        </div>
+        <% } %>
+    </div>
+</div>
+<script>
+(function () {
+  var KEY = 'panelsdcc-local-hostname';
+  function normalizeHost(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 'panels-dcc';
+    s = s.replace(/^https?:\/\//i, '');
+    s = s.split(/[\s/]/)[0];
+    s = s.replace(/:(?:[0-9]+)$/, '');
+    return s || 'panels-dcc';
+  }
+  function applyAll(raw) {
+    var host = normalizeHost(raw);
+    var connect = 'http://' + host + ':9000/';
+    var control = 'http://' + host + '/';
+    document.querySelectorAll('[data-local-panels-urls]').forEach(function (box) {
+      var lc = box.querySelector('[data-local-link-connect]');
+      var lt = box.querySelector('[data-local-link-control]');
+      var dc = box.querySelector('[data-local-display-connect]');
+      var dt = box.querySelector('[data-local-display-control]');
+      if (lc) lc.href = connect;
+      if (lt) lt.href = control;
+      if (dc) dc.textContent = connect;
+      if (dt) dt.textContent = control;
+    });
+  }
+  function syncInputs(fromValue) {
+    document.querySelectorAll('[data-local-panels-hostname]').forEach(function (inp) {
+      inp.value = fromValue;
+    });
+  }
+  function onInput(e) {
+    var v = e.target.value;
+    try { localStorage.setItem(KEY, v); } catch (err) {}
+    applyAll(v);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('[data-local-panels-urls]')) return;
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    var initial = saved != null && saved !== '' ? saved : 'panels-dcc';
+    syncInputs(initial);
+    applyAll(initial);
+    document.querySelectorAll('[data-local-panels-hostname]').forEach(function (inp) {
+      inp.addEventListener('input', onInput);
+      inp.addEventListener('change', onInput);
+    });
+  });
+})();
+</script>

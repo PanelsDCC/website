@@ -1,0 +1,250 @@
+<%- include('layout-start.ejs', { title: 'Get Involved in Testing - Panels DCC', basePath, activeNav: 'testing' }) %>
+<div class="main-container">
+        <div class="full-width-section early-access-banner">
+            <p><strong>Early access status:</strong> PanelsDCC is currently in <strong>Phase&nbsp;1 – Controller Compatibility</strong>, focused on proving PanelsDCC Connect with a wide range of DCC controllers.</p>
+            <p>This page explains the early access programme and how to take part in Phase&nbsp;1 testing.</p>
+        </div>
+
+        <div class="full-width-section">
+            <h1>Early Access &amp; Testing</h1>
+            <p>PanelsDCC is made up of three closely related parts that work together:</p>
+            <ul>
+                <li><strong>PanelsDCC Design</strong> – configure trains, accessories, and visual panels in the cloud, away from the layout.</li>
+                <li><strong>PanelsDCC Control</strong> – run the railway from a Raspberry&nbsp;Pi, using phones, tablets, laptops, and big screens over your local network.</li>
+                <li><strong>PanelsDCC Connect</strong> – link the Raspberry&nbsp;Pi to your DCC command station.</li>
+            </ul>
+            <p>If you’d like a deeper tour of how these fit together, you can read more on the architecture and installation pages, but you don’t need to know every detail to help with testing.</p>
+            <p><a href="<%= basePath %>/architecture.html">Learn more about the PanelsDCC architecture →</a></p>
+            <p><a href="<%= basePath %>/getting-started/installation.html">Read the PanelsDCC installation overview →</a></p>
+            <h2>Where testing fits</h2>
+            <p><strong>Phase&nbsp;1 of the early access programme</strong> focuses on <strong>PanelsDCC Connect</strong> – the part that talks directly to your DCC command station. The aim is to run a few focused tests with a range of controllers and build confidence in the hardware link across different systems.</p>
+        </div>
+
+        <hr/>
+
+        <div class="content-section">
+            <div class="section-text">
+                <h2>What needs testing</h2>
+                <p>PanelsDCC Connect is the bridge between your physical DCC layout and the PanelsDCC Control application running on a Raspberry&nbsp;Pi. The primary target is a <strong>Raspberry&nbsp;Pi</strong> connected to your DCC command station, but PanelsDCC Connect can also be run on other Java-capable platforms.</p>
+                <p>PanelsDCC Connect is built on top of <strong>JMRI’s connection abstraction layer</strong> – the part of JMRI that talks to different DCC systems. PanelsDCC uses this layer purely for controller connectivity, not for JMRI’s own panels, automation, or configuration tools.</p>
+                <p>PanelsDCC Connect is <strong>open source</strong> and available on GitHub: <a href="https://github.com/PanelsDCC/connect" target="_blank">PanelsDCC/connect</a>. The README explains how it works and documents the API that PanelsDCC Connect exposes to PanelsDCC Control.</p>
+                <p>If you’re confident with software, you can also experiment with running PanelsDCC Connect on other platforms and let us know how it behaves.</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Gateway Architecture
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section reverse">
+            <div class="section-text">
+                <h2>Why your help is needed</h2>
+                <p>PanelsDCC is a <strong>hobby project</strong> that has taken years to reach this point, developed alongside a full‑time job and family life (as mentioned on the <a href="<%= basePath %>/future.html">future plans page</a>). There’s no big team or corporate backing – just one person building something they hope will help more people enjoy the hobby.</p>
+                <p>So far, most testing has been with a <strong>Hornby Elite</strong> controller, which works well and even auto‑detects when connected to a Raspberry&nbsp;Pi. To make PanelsDCC genuinely useful, the hardware link needs to be proven with a much wider range of command stations.</p>
+                <p>That’s where you can make a big difference: by running a short, focused set of tests with your own controller and sharing what you find.</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Controller Testing
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="content-section">
+            <div class="section-text">
+                <h2>Who this is for</h2>
+                <p>PanelsDCC is still evolving, and there are practical constraints on available time and access to different hardware.</p>
+                <p><strong>Ideal volunteers:</strong></p>
+                <ul>
+                    <li>Are comfortable running in‑development software</li>
+                    <li>Have experience connecting command stations to PCs</li>
+                    <li>Ideally have some experience with JMRI and know what already works for their setup</li>
+                </ul>
+                <p><strong>Even better:</strong> If you’re familiar with JMRI’s connection layers or confident using AI‑assisted tools (such as Cursor) to work in Java or Kotlin, you can help by contributing directly to the PanelsDCC Connect code via pull requests – especially for new controllers.</p>
+                <p>Alternatively, if you’re willing to <strong>lend a controller</strong> (with the necessary PC connection parts), that can help accelerate support for that system.</p>
+                <p><strong>Time constraints:</strong> I can’t provide detailed one‑to‑one setup support beyond what’s written in the installation and testing guides, especially for controllers I don’t physically own. If you’re happy to follow technical instructions and troubleshoot, you’re exactly who this phase is aimed at.</p>
+                <p><strong>Important disclaimer:</strong> All testing software is provided <strong>without warranty</strong>. You use it entirely at your own risk and remain responsible for your own equipment.</p>
+            </div>
+            <div class="section-media">
+                <div class="section-media-placeholder">
+                    Image/Video: Testing Process
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>What you’ll actually test</h2>
+            <p>If you join Phase&nbsp;1, you’ll focus on a small but representative set of checks:</p>
+            <ul>
+                <li><strong>PanelDCC Connect installation</strong> on a Raspberry&nbsp;Pi</li>
+                <li><strong>Controller detection and connection</strong> with your specific command station</li>
+                <li><strong>Basic train control</strong> – one test locomotive: speed, direction, and a few key functions</li>
+                <li><strong>Accessory control</strong> – at least one accessory address, thrown and closed</li>
+                <li><strong>Stability and reliability</strong> over a short operating session</li>
+            </ul>
+            <p>PanelsDCC Connect includes a <strong>local configuration web interface</strong> so you can configure the connection and run these tests without needing your full PanelsDCC layout configured.</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Controller status</h2>
+            <p>This table focuses on a few common systems and whether PanelsDCC Connect has a direct integration yet. It’s intentionally limited because my direct access to hardware is limited – which is exactly why this early access programme exists. If you have spare command stations and their PC interfaces that you can lend for a period, that can significantly accelerate testing and implementation, especially for widely used systems.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Controller</th>
+                        <th>Implemented in PanelsDCC Connect</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hornby Elite / XpressNet</strong> (<code>xnet-elite</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Working</strong></td>
+                        <td>Reference controller for development; used to prove the end‑to‑end PanelsDCC Connect flow.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCC-EX CSB1 (USB)</strong> (<code>dccpp-ex-usb</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Working</strong></td>
+                        <td>DCC++ / DCC‑EX command station; fully tested with PanelsDCC Connect over USB.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (serial)</strong> (<code>nce-serial</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>NCE PowerCab (USB)</strong> (<code>nce-usb</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCC++ (Ethernet)</strong> (<code>dccpp-ethernet</code>)</td>
+                        <td>Yes</td>
+                        <td><strong>Untested</strong></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>If you have a controller that is listed as untested – or a completely different system that JMRI already supports – your feedback in Phase&nbsp;1 is especially valuable.</p>
+            <h2>JMRI command stations that PanelsDCC could target</h2>
+            <p>Because PanelsDCC Connect builds on top of JMRI, many more command stations are theoretically reachable. The list below is based on the JMRI hardware documentation and shows systems that JMRI can already talk to, even if PanelsDCC Connect does not yet integrate them directly.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>JMRI-supported command station</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Atlas Commander</td><td>Connected via Lenz / XPressNet style interfaces.</td></tr>
+                    <tr><td>CVP EasyDCC</td><td>Serial or terminal server connection.</td></tr>
+                    <tr><td>DCC-EX EX-CommandStation</td><td>Open‑source Arduino‑based command station.</td></tr>
+                    <tr><td>DCC++</td><td>Open‑source Arduino‑based command station.</td></tr>
+                    <tr><td>Digikeijs DR5000</td><td>Multi‑protocol command station.</td></tr>
+                    <tr><td>Digitrax command stations</td><td>Connected via LocoNet interfaces (PR3/PR4, LocoBuffer, etc.).</td></tr>
+                    <tr><td>ESU ECoS</td><td>Ethernet‑connected command station.</td></tr>
+                    <tr><td>Fleischmann Twin Centre</td><td>LocoNet‑based; also supports Z21 / z21 via Ethernet.</td></tr>
+                    <tr><td>Hornby Elite / Select</td><td>USB or XPressNet‑style connections.</td></tr>
+                    <tr><td>Lenz systems</td><td>XPressNet‑based command stations and interfaces.</td></tr>
+                    <tr><td>Lionel TMCC</td><td>Serial‑connected command base.</td></tr>
+                    <tr><td>Märklin CS2</td><td>Ethernet‑connected command station.</td></tr>
+                    <tr><td>MRC command stations</td><td>JMRI can configure decoders; see JMRI docs for details.</td></tr>
+                    <tr><td>NCE PowerCab / Power Pro</td><td>Serial or USB connections, depending on hardware.</td></tr>
+                    <tr><td>Roco LocoMaus / MultiMaus / multiZENTRAL‑Pro</td><td>Typically via XPressNet‑compatible interfaces.</td></tr>
+                    <tr><td>Roco Z21 / z21</td><td>Ethernet‑connected command stations.</td></tr>
+                    <tr><td>SPROG DCC / SPROG Generation 5</td><td>Can act as stand‑alone command station and programmer.</td></tr>
+                    <tr><td>TAMS Master Control</td><td>TAMS command station family.</td></tr>
+                    <tr><td>TCS CS‑105</td><td>TCS command station.</td></tr>
+                    <tr><td>Uhlenbrock Intellibox (I / II)</td><td>LocoNet, serial, or USB connections depending on model.</td></tr>
+                    <tr><td>Viessmann Commander</td><td>XPressNet‑style connection via Lenz‑type interfaces.</td></tr>
+                    <tr><td>Wangrow System One</td><td>Serial‑connected command station.</td></tr>
+                    <tr><td>Zimo MX‑1</td><td>Zimo command station.</td></tr>
+                    <tr><td>ZTC Controls systems</td><td>ZTC 511/521 and related systems via XPressNet‑style interfaces.</td></tr>
+                </tbody>
+            </table>
+            <p>If you run one of these systems and would like to see PanelsDCC Connect support it explicitly, please mention the exact model when you register for early access.</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>How to install PanelsDCC Connect</h2>
+            <p>The installation flow for PanelsDCC Connect is described on the installation page, alongside the rest of the PanelsDCC setup. If you’re joining Phase&nbsp;1, start there, then come back to this page for the testing checklist.</p>
+            <p><a href="<%= basePath %>/getting-started/installation.html">Read the installation guide for PanelsDCC Connect →</a></p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Your Phase 1 checklist</h2>
+            <p>Once PanelsDCC Connect is installed, use the local web interface to run through a short checklist:</p>
+            <ol>
+                <li>Confirm PanelsDCC Connect starts cleanly and shows your controller connection options.</li>
+                <li>Select your controller type and connection, then verify it reports as connected.</li>
+                <li>Drive a single locomotive address: start, stop, change direction, and toggle at least one function.</li>
+                <li>Operate at least one accessory address and confirm both thrown and closed states work.</li>
+                <li>Leave the system running for a short session and note whether any errors or disconnects occur.</li>
+            </ol>
+            <p>For more background on how PanelsDCC Connect fits with the rest of the system, you can also read the architecture overview.</p>
+            <p><a href="<%= basePath %>/architecture.html">Learn how PanelsDCC Connect and Control fit together →</a></p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>Sending feedback and results</h2>
+            <p>Your results are essential for deciding which controllers can be marked as supported, and where extra work is needed.</p>
+            <p>When you send feedback (ideally via email or GitHub), please include:</p>
+            <p><strong>Setup details:</strong></p>
+            <ul>
+                <li>Controller make and model</li>
+                <li>Platform (e.g. Raspberry&nbsp;Pi model and OS version, or other platform)</li>
+                <li>How you connected the controller (USB, serial, network, etc.)</li>
+            </ul>
+            <p><strong>Test outcomes:</strong></p>
+            <ul>
+                <li>Controller detection: working / partial / not working, plus any messages shown</li>
+                <li>Train control: what worked, what didn’t, and any odd behaviours</li>
+                <li>Accessory control: which addresses you tried and what happened</li>
+                <li>Stability: whether the system stayed connected and responsive during your session</li>
+            </ul>
+            <p>You can either email your results or, if you’re comfortable with GitHub, raise an issue on the PanelsDCC Connect repository.</p>
+            <p><a href="mailto:info@panelsd.cc?subject=PanelsDCC%20Connect%20testing">Email PanelsDCC with your testing results →</a></p>
+            <p><a href="https://github.com/PanelsDCC/connect/issues" target="_blank">Open an issue on the PanelsDCC/connect GitHub repository →</a></p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h2>What happens next</h2>
+            <p>As results come in, the controller matrix on the Phase&nbsp;1 page will be updated, issues will be prioritised and fixed, and guidance for specific systems will be refined.</p>
+            <p>Your participation directly shapes which controllers are supported first and how smooth the setup is for the next person with the same hardware.</p>
+        </div>
+
+        <hr/>
+
+        <div class="full-width-section">
+            <h3>Related:</h3>
+            <ul>
+                <li><a href="<%= basePath %>/getting-started/installation.html">Follow the installation guide →</a></li>
+                <li><a href="<%= basePath %>/explore.html">Explore PanelsDCC control features →</a></li>
+                <li><a href="<%= basePath %>/future.html">See future plans →</a></li>
+            </ul>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>
+

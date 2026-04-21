@@ -1,0 +1,45 @@
+<%- include('layout-start.ejs', { title: 'PanelsDCC Wi‑Fi Setup', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+        <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, step: 2, manualChapter: 1 }) %>
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Configure Wi‑Fi</h1>
+            <aside class="doc-tip-banner" role="note" aria-label="Home users">
+                <p><strong>Only ever use your layout at home?</strong> If Wi‑Fi was already set in Raspberry Pi Imager and your network has not changed, you probably do not need to do anything here — open Connect if you want to double-check, or go straight to <a href="<%= basePath %>/getting-started/connect.html">Connecting your DCC controller/s</a>. The steps below matter most for hotspot mode, travel, or extra saved networks.</p>
+            </aside>
+            <p>Manage how your Raspberry Pi joins networks in <strong>PanelsDCC Connect</strong> — home Wi‑Fi, saved access points, and portable hotspot.</p>
+
+            <h2>Step 1: Open Connect, then the Wi‑Fi tab</h2>
+            <p>On a phone, laptop, or the Pi (same network as the Pi), open Connect below. In the Connect window, select the <strong>Wi‑Fi</strong> tab — that is where the rest of this page happens.</p>
+            <%- include('local-panels-urls.ejs', {
+                localPanelsHeading: 'PanelsDCC Connect',
+                localPanelsLead: 'Port 9000 — after it loads, use the Wi‑Fi tab (not Control).',
+                localPanelsShowControl: false,
+                localPanelsEmphasis: 'connect'
+            }) %>
+
+            <h2>Step 2: Client mode or hotspot mode</h2>
+            <ul>
+                <li><strong>Client mode:</strong> the Pi joins a Wi‑Fi network you’ve saved (for example your home layout network).</li>
+                <li><strong>Hotspot mode:</strong> the Pi creates its own hotspot so phones and tablets can connect directly — handy at shows or when there is no trusted network.</li>
+            </ul>
+            <p>When you leave the area of your saved networks, Connect can <strong>switch to hotspot</strong> automatically, or you can change mode yourself — most useful when you <strong>travel</strong> with the layout or operate away from your usual network.</p>
+
+            <h2>Step 3: Hotspot QR code</h2>
+            <p>In hotspot mode, Connect shows a <strong>QR code</strong> so camera-equipped devices can join quickly. Consider printing it and keeping it on or near the Pi case.</p>
+
+            <h2>Step 4: Add or update known networks</h2>
+            <p>From the Wi‑Fi tab, scan for nearby networks, pick one, and enter the password to save it as a <strong>known network</strong> for later sessions. Update this list when your venue or home network changes.</p>
+
+            <%- include('getting-started-pager.ejs', {
+                pagerPrevHref: basePath + '/getting-started/installation.html',
+                pagerPrevTitle: 'Installation',
+                pagerNextHref: basePath + '/getting-started/connect.html',
+                pagerNextTitle: 'Connecting your DCC controller/s'
+            }) %>
+        </div>
+        </div>
+        </div>
+    </div>
+<%- include('layout-end.ejs') %>

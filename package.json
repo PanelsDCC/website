@@ -1,0 +1,23 @@
+{
+  "name": "panelsd-cc-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:local && npm run publish:both",
+    "build:local": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "preview": "serve dist -l 3000",
+    "dev": "npm run build:local && concurrently -k \"npm run watch\" \"npm run preview\"",
+    "publish:source": "git push -u origin source",
+    "publish:pages": "gh-pages -d dist -b gh-pages --dotfiles",
+    "publish:both": "npm run publish:source && npm run publish:pages"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "gh-pages": "^6.3.0",
+    "serve": "^14.2.4"
+  }
+}
