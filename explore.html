@@ -2,29 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introducing Panels DCC</title>
-    <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introducing Panels DCC</title>
+<link rel="stylesheet" href="/style.css">
+
 </head>
 <body>
     <nav class="nav">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">Panels DCC</a>
-            <ul class="nav-links">
-                <li><a href="explore.html">Explore</a></li>
-                <li><a href="installation.html" class="nav-link-getting-started">Installation and getting started</a></li>
-                <li><a href="testing.html">Testing</a></li>
-                <li><a href="future.html">Future</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div class="nav-container">
+        <a href="/index.html" class="nav-logo">Panels DCC</a>
+        <ul class="nav-links">
+            <li><a href="/explore.html" class="nav-link-active">Explore</a></li>
+            <li><a href="/getting-started/installation.html" class="nav-link-getting-started">Getting started &amp; manual</a></li>
+            <li><a href="/testing.html" class="">Testing</a></li>
+            <li><a href="/future.html" class="">Future</a></li>
+        </ul>
+    </div>
+</nav>
 
-    <div class="main-container">
+
+<div class="main-container">
         <div class="full-width-section">
-            <h1>Introducing Panels DCC</h1>
-            <p>Panels DCC is a flexible control system for Digital Command Control layouts, designed to bring together <strong>train driving</strong>, <strong>accessory operation</strong>, and <strong>route-based panel control</strong> into a single, coherent experience.</p>
-            <p>Whether you want hands-on driving, realistic signal-box style operation, or a hybrid of both, Panels DCC adapts to how <em>you</em> want to run your railway.</p>
-            <p>Panels DCC adapts seamlessly across <strong>mobile phones, tablets, and desktops</strong>. Multiple clients can run simultaneously with live state synchronization — changes on one device appear instantly on all others.</p>
+            <div class="section-text">
+                <h1>Introducing Panels DCC</h1>
+                <p>Panels DCC is a flexible control system for Digital Command Control layouts, designed to bring together <strong>train driving</strong>, <strong>accessory operation</strong>, and <strong>route-based panel control</strong> into a single, coherent experience.</p>
+                <p>Whether you want hands-on driving, realistic signal-box style operation, or a hybrid of both, Panels DCC adapts to how <em>you</em> want to run your railway.</p>
+                <p>Panels DCC adapts seamlessly across <strong>mobile phones, tablets, and desktops</strong>. Multiple clients can run simultaneously with live state synchronization — changes on one device appear instantly on all others.</p>
+            </div>
+            <div class="section-media section-media-fullwidth">
+                <img src="/images/panel-demo.png" alt="Panel-Based Control Interface" class="section-media-img"/>
+            </div>
         </div>
 
         <hr/>
@@ -41,10 +48,11 @@
                     <li>Function icons for lights, sound, and auxiliary features</li>
                     <li>Clear feedback on train state, even when operating several trains at once</li>
                     <li>Sync across devices for flexible operation from anywhere on the layout</li>
+                    <li>Child lock mode, enabling you to disable/limit throttle and function access (while still being able to control these on another device!)</li>
                 </ul>
             </div>
             <div class="section-media">
-                <img src="images/train-control.png" alt="Train Operation Interface" class="section-media-img"/>
+                <img src="/images/train-control.png" alt="Train Operation Interface" class="section-media-img"/>
             </div>
         </div>
 
@@ -66,7 +74,7 @@
                 <p>Accessory control is designed to scale — from a small shunting plank to a complex multi-station layout.</p>
             </div>
             <div class="section-media">
-                <img src="images/accessory-control.png" alt="Accessory Control Interface" class="section-media-img"/>
+                <img src="/images/accessory-control.png" alt="Accessory Control Interface" class="section-media-img"/>
             </div>
         </div>
 
@@ -93,21 +101,18 @@
                 </ul>
             </div>
             <div class="section-media section-media-fullwidth">
-                <img src="images/panel-demo.png" alt="Panel-Based Control Interface" class="section-media-img"/>
+                <img src="/images/panel-demo.png" alt="Panel-Based Control Interface" class="section-media-img"/>
             </div>
         </div>
 
         <hr/>
 
-        <div class="content-section">
+        <div class="full-width-section">
             <div class="section-text">
                 <h2>Cloud Configuration, Flexible Operation</h2>
-                <p>Panels DCC is <a href="configuration.html">configured</a> in the cloud. That gives you a single, resilient place to edit and view your layout, set up panels, and configure trains — from anywhere, with no need to be at the layout. When you are ready to operate, your configuration is <strong>synced to your local control application</strong>.</p>
+                <p>Panels DCC is configured in the cloud. That gives you a single, resilient place to edit and view your layout, set up panels, and configure trains — from anywhere, with no need to be at the layout. When you are ready to operate, your configuration is <strong>synced to your local control application</strong>.</p>
                 <p>From there, you can operate your layout online or offline. So you design and prepare in the cloud, then run the railway however your venue and connectivity allow — same interface, same behaviour.</p>
-                <p>Read more about the architecture and how to get started <a href="installation.html">here</a>.</p>
-            </div>
-            <div class="section-media">
-                <img src="images/control-status.png" alt="Control status" class="section-media-img"/>
+                <p>Read more about the architecture and how to get started <a href="/getting-started/installation.html">here</a>.</p>
             </div>
         </div>
 
@@ -116,12 +121,13 @@
         <div class="full-width-section">
             <h3>Next steps:</h3>
             <ul>
-                <li><a href="configuration.html">Learn about visual configuration →</a></li>
-                <li><a href="installation.html">Find out how to get started →</a></li>
-                <li><a href="future.html">See what's coming in the future →</a></li>
+                <li><a href="/configuration/index.html">Learn about visual configuration →</a></li>
+                <li><a href="/getting-started/installation.html">Find out how to get started →</a></li>
+                <li><a href="/future.html">See what's coming in the future →</a></li>
             </ul>
         </div>
     </div>
 </body>
 </html>
+
 

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driving your first train — PanelsDCC</title>
+<link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <nav class="nav">
+    <div class="nav-container">
+        <a href="/index.html" class="nav-logo">Panels DCC</a>
+        <ul class="nav-links">
+            <li><a href="/explore.html" class="">Explore</a></li>
+            <li><a href="/getting-started/installation.html" class="nav-link-getting-started nav-link-active">Getting started &amp; manual</a></li>
+            <li><a href="/testing.html" class="">Testing</a></li>
+            <li><a href="/future.html" class="">Future</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="main-container">
+        <div class="getting-started-layout">
+        <aside class="docs-sidebar" aria-label="Guide navigation">
+    <nav class="docs-sidebar-chapter-switcher" aria-label="Manual chapters">
+        <a href="/getting-started/installation.html" class="docs-sidebar-ch-switch is-active" title="Chapter 1 — Getting started" aria-current=&#34;page&#34;><span class="docs-sidebar-ch-switch-num">1</span><span class="docs-sidebar-ch-switch-label">Getting started</span></a>
+        <a href="/configuration/index.html" class="docs-sidebar-ch-switch" title="Chapter 2 — Configuration"><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
+        <a href="/control/index.html" class="docs-sidebar-ch-switch" title="Chapter 3 — Control"><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
+        <a href="/system-admin/index.html" class="docs-sidebar-ch-switch" title="Chapter 4 — System admin"><span class="docs-sidebar-ch-switch-num">4</span><span class="docs-sidebar-ch-switch-label">System admin</span></a>
+    </nav>
+    <div class="sidebar-nav-box is-chapter-current">
+        <h2 class="sidebar-nav-box-title">
+            Chapter 1 — Getting started
+        </h2>
+        <ol class="sidebar-nav-steps">
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/getting-started/installation.html"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Installation</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/getting-started/wifi.html"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Configure Wi‑Fi</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/getting-started/connect.html"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">DCC controllers</span></a>
+            </li>
+            <li class="sidebar-nav-step is-current">
+                <span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">4</span><span class="sidebar-nav-label">First train</span></span>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/getting-started/account.html"><span class="sidebar-nav-num" aria-hidden="true">5</span><span class="sidebar-nav-label">Your account</span></a>
+            </li>
+        </ol>
+    </div>
+
+    <div class="sidebar-nav-box">
+        <h2 class="sidebar-nav-box-title">
+            <a href="/configuration/index.html" class="sidebar-nav-box-title-link">Chapter 2 — Configuration</a>
+        </h2>
+        <ol class="sidebar-nav-steps">
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/configuration/index.html#trains"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></a>
+                <ol class="sidebar-nav-substeps" aria-label="Trains subsections">
+                    <li class="sidebar-nav-substep">
+                        <a class="sidebar-nav-row sidebar-nav-row--sub" href="/configuration/index.html#functions"><span class="sidebar-nav-num sidebar-nav-num--sub" aria-hidden="true">1.1</span><span class="sidebar-nav-label">Functions</span></a>
+                    </li>
+                    <li class="sidebar-nav-substep">
+                        <a class="sidebar-nav-row sidebar-nav-row--sub" href="/configuration/index.html#function-maps"><span class="sidebar-nav-num sidebar-nav-num--sub" aria-hidden="true">1.2</span><span class="sidebar-nav-label">Function maps</span></a>
+                    </li>
+                </ol>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/configuration/index.html#accessories"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/configuration/index.html#panels"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></a>
+            </li>
+        </ol>
+    </div>
+
+    <div class="sidebar-nav-box">
+        <h2 class="sidebar-nav-box-title">
+            <a href="/control/index.html" class="sidebar-nav-box-title-link">Chapter 3 — Control</a>
+        </h2>
+        <ol class="sidebar-nav-steps">
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/control/index.html#trains"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/control/index.html#accessories"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/control/index.html#panels"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></a>
+            </li>
+        </ol>
+    </div>
+
+    <div class="sidebar-nav-box">
+        <h2 class="sidebar-nav-box-title">
+            <a href="/system-admin/index.html" class="sidebar-nav-box-title-link">Chapter 4 — System admin</a>
+        </h2>
+        <ol class="sidebar-nav-steps">
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/system-admin/index.html#profile-and-devices"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Profile &amp; devices</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/system-admin/index.html#syncing-data"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Syncing data</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/system-admin/index.html#wifi-configuration"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Wi‑Fi configuration</span></a>
+            </li>
+            <li class="sidebar-nav-step">
+                <a class="sidebar-nav-row" href="/system-admin/index.html#update-management"><span class="sidebar-nav-num" aria-hidden="true">4</span><span class="sidebar-nav-label">Update management</span></a>
+            </li>
+        </ol>
+    </div>
+</aside>
+
+        <div class="getting-started-layout-main">
+        <div class="full-width-section">
+            <h1>Driving your first train</h1>
+            
+            <h2>Step 1: Open PanelsDCC Control</h2>
+            <div class="local-panels-urls local-panels-urls--emphasis-control" data-local-panels-urls>
+    <h3 class="local-panels-urls-heading">PanelsDCC Control</h3>
+    <p class="local-panels-urls-lead">Driving happens here — not on port 9000 (that is Connect, for setup).</p>
+    <label class="local-panels-urls-field">
+        <span class="local-panels-urls-label">Hostname of your Pi</span>
+        <input type="text" class="local-panels-urls-input" data-local-panels-hostname inputmode="text" autocomplete="off" spellcheck="false" placeholder="panels-dcc" />
+    </label>
+    <p class="local-panels-urls-hint">Use the same hostname as in Raspberry Pi Imager (we recommend <strong>panels-dcc</strong>). You can also enter a <code>.local</code> name or IP address. Your choice is saved in this browser.</p>
+    <div class="local-panels-urls-rows">
+        
+        
+        <div class="local-panels-urls-row local-panels-urls-row--control">
+            <div class="local-panels-urls-row-top">
+                <span class="local-panels-urls-badge">PanelsDCC Control</span>
+                <span class="local-panels-urls-meta">port 80 (default)</span>
+            </div>
+            <p class="local-panels-urls-desc">Run trains and panels in the browser — no port in the URL.</p>
+            <p class="local-panels-urls-url"><code data-local-display-control>http://panels-dcc/</code></p>
+            <a class="btn btn-primary local-panels-urls-btn" data-local-link-control href="http://panels-dcc/" target="_blank" rel="noopener noreferrer">Open Control</a>
+        </div>
+        
+    </div>
+</div>
+<script>
+(function () {
+  var KEY = 'panelsdcc-local-hostname';
+  function normalizeHost(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 'panels-dcc';
+    s = s.replace(/^https?:\/\//i, '');
+    s = s.split(/[\s/]/)[0];
+    s = s.replace(/:(?:[0-9]+)$/, '');
+    return s || 'panels-dcc';
+  }
+  function applyAll(raw) {
+    var host = normalizeHost(raw);
+    var connect = 'http://' + host + ':9000/';
+    var control = 'http://' + host + '/';
+    document.querySelectorAll('[data-local-panels-urls]').forEach(function (box) {
+      var lc = box.querySelector('[data-local-link-connect]');
+      var lt = box.querySelector('[data-local-link-control]');
+      var dc = box.querySelector('[data-local-display-connect]');
+      var dt = box.querySelector('[data-local-display-control]');
+      if (lc) lc.href = connect;
+      if (lt) lt.href = control;
+      if (dc) dc.textContent = connect;
+      if (dt) dt.textContent = control;
+    });
+  }
+  function syncInputs(fromValue) {
+    document.querySelectorAll('[data-local-panels-hostname]').forEach(function (inp) {
+      inp.value = fromValue;
+    });
+  }
+  function onInput(e) {
+    var v = e.target.value;
+    try { localStorage.setItem(KEY, v); } catch (err) {}
+    applyAll(v);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    if (!document.querySelector('[data-local-panels-urls]')) return;
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    var initial = saved != null && saved !== '' ? saved : 'panels-dcc';
+    syncInputs(initial);
+    applyAll(initial);
+    document.querySelectorAll('[data-local-panels-hostname]').forEach(function (inp) {
+      inp.addEventListener('input', onInput);
+      inp.addEventListener('change', onInput);
+    });
+  });
+})();
+</script>
+
+
+            <h2>Step 2: Install as a PWA on phone or tablet (recommended)</h2>
+            <p>If you use Control on a phone or tablet, installing as a <strong>Progressive Web App (PWA)</strong> makes it easier to return to the layout.</p>
+            <p><strong>iPhone / iPad (Safari):</strong> open PanelsDCC Control, tap <strong>Share</strong>, <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</p>
+            <p><strong>Android (Chrome):</strong> open Control, tap the menu (<strong>...</strong>), then <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p>
+
+            <h2>Step 3: First launch and login</h2>
+            <p>When Control loads, it may ask you to log in to a PanelsDCC account.</p>
+            <p>You can <strong>skip</strong> login and operate trains only — useful to prove everything works before you create an account.</p>
+
+            <h2>Step 4: Connection status</h2>
+            <p>Check the strip at the top of Control:</p>
+            <ul>
+                <li><strong>Ready</strong> — connected to PanelsDCC Connect, with a controller detected.</li>
+                <li><strong>No controllers</strong> — Connect is reachable but no command station is detected. See <a href="/getting-started/connect.html">Connecting your DCC controller/s</a>.</li>
+                <li><strong>Offline</strong> — this device cannot reach Connect (network or URL).</li>
+            </ul>
+
+            <h2>Quick test: drive without logging in</h2>
+            <ol>
+                <li>Open <strong>Trains</strong>.</li>
+                <li>Choose <strong>Select by DCC number</strong>.</li>
+                <li>Enter your locomotive’s DCC address.</li>
+                <li>Set speed and direction; try the function buttons.</li>
+            </ol>
+            <p>If nothing moves, re-check status above or <a href="/getting-started/connect.html">Connect setup</a>.</p>
+
+            <h2>Next steps</h2>
+            <p>When driving works, continue to <strong><a href="/getting-started/account.html">Your PanelsDCC account</a></strong> (step&nbsp;5) so you can sign in and link cloud configuration. After that, <a href="/configuration/index.html">Chapter 2 — Configuration</a> covers layout design in the cloud; day‑to‑day operation reference is <a href="/control/index.html">Chapter 3 — Control</a>.</p>
+
+            <nav class="gs-pager" aria-label="Getting started sequence">
+    <div class="gs-pager-slot gs-pager-slot--prev">
+        
+        <a href="/getting-started/connect.html" class="gs-pager-link gs-pager-link--prev">
+            <span class="gs-pager-kicker">← Previous</span>
+            <span class="gs-pager-title">Connecting your DCC controller/s</span>
+        </a>
+        
+    </div>
+    <div class="gs-pager-slot gs-pager-slot--next">
+        
+        <a href="/getting-started/account.html" class="gs-pager-link gs-pager-link--next">
+            <span class="gs-pager-kicker">Next →</span>
+            <span class="gs-pager-title">Your PanelsDCC account</span>
+        </a>
+        
+    </div>
+</nav>
+
+        </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>
+
