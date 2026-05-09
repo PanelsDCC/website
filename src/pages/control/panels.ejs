@@ -1,0 +1,40 @@
+<%- include('layout-start.ejs', { title: 'Control — Panels', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 3, controlStep: 3 }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Panels</h1>
+                <p>Panels bring train driving and accessory control together on a visual signal-box style diagram of your layout.</p>
+                <p>Panels are available on tablet and desktop devices.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Device-local panel layouts">
+                    <p><strong>Important:</strong> panel layouts are stored locally per device and browser, so they do not sync between devices. Set up panel arrangement separately on each new tablet, desktop, or browser profile.</p>
+                </aside>
+
+                <h2>1. Select a panel</h2>
+                <p>On the panels screen, choose the panel you want to operate.</p>
+                
+                <h2>2. Adjust zoom and workspace</h2>
+                <p>Use the zoom controls at the bottom-left to increase or decrease panel diagram size. This helps you balance layout visibility against space for floating train, macro, and accessory controls.</p>
+
+                <h2>3. Add train and macro controllers</h2>
+                <p>From the top-right controls, add train control panels and macros to the current panel view.</p>
+                <p>Train controllers work exactly like the train screen controls. You can drag them to position them where you need them.</p>
+
+                <h2>4. Accessory and macro controller behavior</h2>
+                <p>Macro and accessory controllers can be resized, moved, and pinned.</p>
+                <p>Pinning is what saves controller placement between sessions. A pinned controller reappears in the same position next time you open that panel on the same device and browser.</p>
+
+                <h2>5. Open accessory controls from the diagram</h2>
+                <p>You can open accessory controllers directly from the panel diagram: click an element such as a point or signal, and if an accessory is associated with it, the accessory controller appears temporarily for interaction.</p>
+                <p>You can also pin, drag, and resize these accessory controllers. A dotted line links each controller to its accessory so it is clear which layout element it controls.</p>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/control/accessories.html',
+                    pagerPrevTitle: 'Accessories'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>

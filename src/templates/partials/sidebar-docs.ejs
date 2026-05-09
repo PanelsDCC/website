@@ -2,18 +2,19 @@
 const gsBase = basePath + '/getting-started/';
 const manualBase = basePath + '/manual/index.html';
 const st = typeof step !== 'undefined' && step !== null && step !== false ? Number(step) : null;
+const cst = typeof controlStep !== 'undefined' && controlStep !== null && controlStep !== false ? Number(controlStep) : null;
 const mch = typeof manualChapter !== 'undefined' && manualChapter !== null && manualChapter !== false ? Number(manualChapter) : null;
 _%>
 <aside class="docs-sidebar" aria-label="Guide navigation">
     <nav class="docs-sidebar-chapter-switcher" aria-label="Manual chapters">
         <a href="<%= gsBase %>installation.html" class="docs-sidebar-ch-switch<%= mch === 1 ? ' is-active' : '' %>" title="Chapter 1 — Getting started"<%= mch === 1 ? ' aria-current="page"' : '' %>><span class="docs-sidebar-ch-switch-num">1</span><span class="docs-sidebar-ch-switch-label">Getting started</span></a>
         <a href="<%= basePath %>/configuration/index.html" class="docs-sidebar-ch-switch<%= mch === 2 ? ' is-active' : '' %>" title="Chapter 2 — Configuration"<%= mch === 2 ? ' aria-current="page"' : '' %>><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
-        <a href="<%= basePath %>/control/index.html" class="docs-sidebar-ch-switch<%= mch === 3 ? ' is-active' : '' %>" title="Chapter 3 — Control"<%= mch === 3 ? ' aria-current="page"' : '' %>><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
+        <a href="<%= basePath %>/control/trains.html" class="docs-sidebar-ch-switch<%= mch === 3 ? ' is-active' : '' %>" title="Chapter 3 — Control"<%= mch === 3 ? ' aria-current="page"' : '' %>><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
         <a href="<%= basePath %>/system-admin/index.html" class="docs-sidebar-ch-switch<%= mch === 4 ? ' is-active' : '' %>" title="Chapter 4 — System admin"<%= mch === 4 ? ' aria-current="page"' : '' %>><span class="docs-sidebar-ch-switch-num">4</span><span class="docs-sidebar-ch-switch-label">System admin</span></a>
     </nav>
     <div class="sidebar-nav-box<%= mch === 1 ? ' is-chapter-current' : '' %>">
         <h2 class="sidebar-nav-box-title">
-            <% if (mch === 1) { %>Chapter 1 — Getting started<% } else { %><a href="<%= manualBase %>#ch1-heading" class="sidebar-nav-box-title-link">Chapter 1 — Getting started</a><% } %>
+            <% if (mch === 1) { %>Chapter 1 — Getting started<% } else { %><a href="<%= gsBase %>installation.html" class="sidebar-nav-box-title-link">Chapter 1 — Getting started</a><% } %>
         </h2>
         <ol class="sidebar-nav-steps">
             <li class="sidebar-nav-step<%= st === 1 ? ' is-current' : '' %>">
@@ -61,17 +62,17 @@ _%>
 
     <div class="sidebar-nav-box<%= mch === 3 ? ' is-chapter-current' : '' %>">
         <h2 class="sidebar-nav-box-title">
-            <% if (mch === 3) { %>Chapter 3 — Control<% } else { %><a href="<%= basePath %>/control/index.html" class="sidebar-nav-box-title-link">Chapter 3 — Control</a><% } %>
+            <% if (mch === 3) { %>Chapter 3 — Control<% } else { %><a href="<%= basePath %>/control/trains.html" class="sidebar-nav-box-title-link">Chapter 3 — Control</a><% } %>
         </h2>
         <ol class="sidebar-nav-steps">
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="<%= basePath %>/control/index.html#trains"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></a>
+            <li class="sidebar-nav-step<%= cst === 1 ? ' is-current' : '' %>">
+                <% if (cst === 1) { %><span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></span><% } else { %><a class="sidebar-nav-row" href="<%= basePath %>/control/trains.html"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></a><% } %>
             </li>
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="<%= basePath %>/control/index.html#accessories"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
+            <li class="sidebar-nav-step<%= cst === 2 ? ' is-current' : '' %>">
+                <% if (cst === 2) { %><span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></span><% } else { %><a class="sidebar-nav-row" href="<%= basePath %>/control/accessories.html"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a><% } %>
             </li>
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="<%= basePath %>/control/index.html#panels"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></a>
+            <li class="sidebar-nav-step<%= cst === 3 ? ' is-current' : '' %>">
+                <% if (cst === 3) { %><span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></span><% } else { %><a class="sidebar-nav-row" href="<%= basePath %>/control/panels.html"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></a><% } %>
             </li>
         </ol>
     </div>

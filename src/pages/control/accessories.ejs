@@ -1,0 +1,41 @@
+<%- include('layout-start.ejs', { title: 'Control — Accessories', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 3, controlStep: 2 }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Accessories</h1>
+                <p>The accessories screen gives you a complete control list: every macro first, then every accessory.</p>
+                <p>This view works especially well on mobile. On desktop, many operators prefer to control accessories from panels (see the next section).</p>
+                <img src="/images/accessory-control-annotated.png" alt="Accessories control panel with annotations" class="section-media-img" style="display:block;max-width:100%;width:min(80%, 100%);height:auto;margin:1rem auto 1.5rem;padding:0.25rem;"/>
+                <h2>1. List order and navigation</h2>
+                <p>Macros are listed first, followed by all individual accessories. Use this when you want to run a grouped action quickly before making individual changes.</p>
+
+                <h2>2. Search and filtering</h2>
+                <p>You can search accessories by name, and filter by type and location. Location filtering depends on accessory panel assignments in configuration.</p>
+
+                <h2>3. Accessory state and reliability</h2>
+                <aside class="doc-tip-banner" role="note" aria-label="Accessory state reliability">
+                    <p><strong>Important:</strong> DCC command stations do not reliably report accessory state. The displayed state is a useful indicator, but it is not guaranteed to reflect the physical layout at all times.</p>
+                </aside>
+                <p>At session start, initialize your layout so every accessory is set to a known state.</p>
+
+                <h2>4. Using macros effectively</h2>
+                <p>Macros are recommended for setting multiple accessory states quickly and consistently, especially during initialization.</p>
+                <p>Macro creation and setup are documented in <a href="<%= basePath %>/configuration/index.html#accessories">Chapter 2 — Configuration</a>.</p>
+                <p>If needed, set a delay between macro steps in <strong>Settings</strong> to match how fast your layout hardware can process commands. This also helps sequencing, for example allowing points to fully move before signals are updated, which is useful with slow-action point motors.</p>
+
+                <h2>5. Retrying accessory commands</h2>
+                <p>Accessory buttons remain clickable after use, so you can retry any command if a turnout, signal, or other accessory does not switch on the first attempt.</p>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/control/trains.html',
+                    pagerPrevTitle: 'Trains',
+                    pagerNextHref: basePath + '/control/panels.html',
+                    pagerNextTitle: 'Panels'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>
