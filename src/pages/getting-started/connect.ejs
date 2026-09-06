@@ -21,7 +21,10 @@
             <p>Physically connect your command station to the Pi (usually USB for the setups we document). Power on the command station.</p>
             <p><strong>DCC-EX CSB1 via USB</strong> (<code>dccpp-ex-usb</code>) and <strong>Hornby Elite / XpressNet</strong> via USB (<code>xnet-elite</code>) are <strong>implemented and working</strong> in Connect with <strong>zero-configuration</strong> support when detection succeeds — the connection is created for you and should show as connected. Other controllers use the same connection machinery; see the table below for status.</p>
             <p><strong>NCE PowerCab</strong> (serial or USB) and <strong>DCC++ over Ethernet</strong> are available to configure in Connect but are marked <strong>untested</strong> in our wider programme — you may get auto-detection or you may need the manual flow in Step&nbsp;3. If you rely on an untested path, read the <a href="<%= basePath %>/testing.html">testing page</a> first.</p>
-
+            <figure class="doc-image-center">
+                <img src="<%= basePath %>/images/dcc-controller-active.png" alt="PanelsDCC Connect screen showing an active DCC-EX controller" style="width: 600px;"/>
+                <figcaption>PanelsDCC Connect screen showing an active DCC-EX controller</figcaption>
+            </figure>
             <h3>Controller support reference</h3>
             <p>The <strong>Zero configuration</strong> column shows whether Connect can detect and set up the device automatically. <strong>Untested</strong> means we still need more real‑world reports — plan on manual setup if auto-detection does not appear.</p>
             <table>
@@ -94,12 +97,23 @@
             <p>If you use <strong>two</strong> controllers (for example one for trains and one for an accessory bus), check how Connect has assigned <strong>roles</strong>: a second connection is typically treated as the accessories controller. Review role assignment whenever you power on hardware or after updates.</p>
 
             <h2>Step 5: Confirm everything works</h2>
-            <p>In Connect, verify:</p>
-            <ol>
-                <li>Your command station appears as connected with manufacturer/version information where available.</li>
-                <li>You can run one locomotive movement and one function (where possible).</li>
-                <li>You can operate one accessory (typically a point).</li>
-            </ol>
+            <p>In Connect, first make sure your command station appears as connected, with manufacturer/version details where available.</p>
+
+            <h3>Test 1: Drive a train and check functions</h3>
+            <p>Select a locomotive DCC number and run a short movement test. For first-time setup, use a low number if possible (for example <strong>3</strong>, the common default).</p>
+            <p>Also test one or two <strong>latching</strong> functions only (for example lights on/off or sound on/off), so you can clearly confirm the state change in both directions.</p>
+            <figure class="doc-image-center">
+                <img src="<%= basePath %>/images/config-train-test.png" alt="PanelsDCC Connect screen showing how to test a train" style="width: 600px;"/>
+                <figcaption>PanelsDCC Connect screen showing how to test a train</figcaption>
+            </figure>
+
+            <h3>Test 2: Operate an accessory</h3>
+            <p>Select an accessory DCC number, then set both states: <strong>closed/thrown</strong> (also shown as <strong>forward/reverse</strong> in some systems).</p>
+            <p>The easiest practical test is usually a point motor, or a simple two-aspect signal (red/green, danger/clear).</p>
+            <figure class="doc-image-center">
+                <img src="<%= basePath %>/images/config-accessory-test.png" alt="PanelsDCC Connect screen showing how to test an accessory" style="width: 600px;"/>
+                <figcaption>PanelsDCC Connect screen showing how to test an accessory</figcaption>
+            </figure>
             <p>When that looks good, continue to driving from <strong>PanelsDCC Control</strong> in the next getting started step.</p>
 
             <%- include('getting-started-pager.ejs', {

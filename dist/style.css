@@ -413,6 +413,18 @@ kbd {
     color: var(--text-bright);
 }
 
+/* Reusable centered image block for documentation pages */
+.doc-image-center {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.doc-image-center img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.4rem;
+}
+
 @media (prefers-color-scheme: dark) {
     .doc-tip-banner {
         background: color-mix(in srgb, var(--links) 12%, var(--background-alt));
