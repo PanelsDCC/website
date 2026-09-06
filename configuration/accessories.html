@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configuration — Panels DCC</title>
+<title>Configuration — Accessories</title>
 <link rel="stylesheet" href="/style.css">
 
 </head>
@@ -69,8 +69,8 @@
                     </li>
                 </ol>
             </li>
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="/configuration/accessories.html"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
+            <li class="sidebar-nav-step is-current">
+                <span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></span>
                 <ol class="sidebar-nav-substeps" aria-label="Accessories subsections">
                     <li class="sidebar-nav-substep">
                         <a class="sidebar-nav-row sidebar-nav-row--sub" href="/configuration/accessories.html#macros"><span class="sidebar-nav-num sidebar-nav-num--sub" aria-hidden="true">2.1</span><span class="sidebar-nav-label">Macros</span></a>
@@ -131,71 +131,130 @@
 
         <div class="getting-started-layout-main">
             <div class="full-width-section">
-                <div class="section-text">
-                    <h1>Chapter 2 — Configuration</h1>
-                    <p>Configuration happens on the <strong>Panels DCC website</strong> in a browser — on your sofa, at a desk, or anywhere you have internet. You do not need to be next to the layout. When you are ready to run trains, <strong>PanelsDCC Control</strong> on the Raspberry Pi uses what you have set up here.</p>
-                    <p>Everything is visual. There is no requirement to write scripts or edit configuration files. If you can click, type, and drag, you can add locomotives, accessories, and control panels.</p>
-                    <p><a class="btn btn-primary" href="https://dev.app.panelsd.cc" target="_blank" rel="noopener noreferrer">Open Panels DCC website</a></p>
-                    <p>Complete <strong><a href="/getting-started/installation.html">Getting started</a></strong> first (install, Wi‑Fi, Connect, <a href="/getting-started/first-train.html">first train</a>, and <a href="/getting-started/account.html">your account</a>) so Control can talk to your command station.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>Recommended order</h2>
-                    <ol>
-                        <li><a href="/configuration/trains.html">Trains</a> — add locomotives and their DCC numbers.</li>
-                        <li><a href="/configuration/function-maps.html">Functions and function maps</a> — icons for lights, horns, and other decoder features (optional until you want more than a basic throttle).</li>
-                        <li><a href="/configuration/accessories.html">Accessories</a> — points, signals, and other layout items.</li>
-                        <li><a href="/configuration/panels.html">Panels</a> — draw the diagram you will operate from, and link it to those accessories.</li>
-                    </ol>
-                    <p>Sensors, train detection, and route setting will be covered in later chapters. This chapter is the everyday setup path.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>1. Trains</h2>
-                    <p>Your cloud library of locomotives, coaches, and wagons: pictures, status, DCC address, decoder notes, and function icons. Quick-add from the UK library, or enter details by hand.</p>
-                    <p><a href="/configuration/trains.html">Open Configuration — Trains</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>2. Accessories</h2>
-                    <p>Create points, colour-light and semaphore signals, crossings, and custom items. Each state has a DCC number. Macros group several accessories so you can set them together later in Control.</p>
-                    <p><a href="/configuration/accessories.html">Open Configuration — Accessories</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>3. Panels</h2>
-                    <p>A panel is a control diagram of your layout — not a scale track plan. Place track, points, and signals, then link them to the accessories you have already created (or create a missing accessory without leaving the editor).</p>
-                    <p><a href="/configuration/panels.html">Open Configuration — Panels</a></p>
-                </div>
-            </div>
+                <h1>Accessories</h1>
+                <p>Points, signals, crossings, and other layout items are configured on the <strong>Panels DCC website</strong>. Each accessory has a name, a type that looks like the real thing, and a DCC number for every state you want to throw.</p>
+                <p><a class="btn btn-primary" href="https://dev.app.panelsd.cc/accessories" target="_blank" rel="noopener noreferrer">Open accessories on the Panels DCC website</a></p>
+                <figure class="doc-media">
+    
+    <img src="/images/accessory-control-annotated.png" alt="Accessories in PanelsDCC Control" class="section-media-img doc-media-img"/>
+    
+    <figcaption class="doc-media-caption">Once saved, the same accessories appear in Control with live (best-effort) state.</figcaption>
+</figure>
 
-            <nav class="gs-pager" aria-label="Getting started sequence">
+
+                <h2>Step 1: Choose a type</h2>
+                <p>Click <strong>Add New Accessory</strong>. You first pick a type card — search or filter by category if the grid is long.</p>
+                <div class="doc-icon-row">
+                    <div class="doc-icon-card">
+                        <img src="/images/config/point-rh-up.svg" alt="Point or turnout"/>
+                        <span>Point / Turnout</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/two-aspect-home.svg" alt="Colour-light signal"/>
+                        <span>Colour signal</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/four-aspect.svg" alt="Four-aspect colour signal"/>
+                        <span>Four aspect</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/home-gwr.svg" alt="Semaphore signal"/>
+                        <span>Semaphore</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/open-closed.svg" alt="Open or closed accessory"/>
+                        <span>Open / closed</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/level-crossing.svg" alt="Level crossing"/>
+                        <span>Level crossing</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="/images/config/custom-accessory.svg" alt="Custom accessory"/>
+                        <span>Custom</span>
+                    </div>
+                </div>
+                <p>There is also a <strong>Turn Table</strong> type for accessories that use several DCC numbers. Custom is the catch-all for lights, motors, and anything without a dedicated picture.</p>
+                <p>For points and signals, pick the subtype that matches the geometry or aspect count (for example Point (Right up), 2 Aspect Home, Home Signal (GWR)).</p>
+                <figure class="doc-media">
+    
+    <div class="section-media-placeholder doc-media-placeholder">Screenshot: Accessory type picker</div>
+    
+    
+</figure>
+
+
+                <h2>Step 2: Name and picture</h2>
+                <p>Give the accessory a short <strong>Name</strong> (required, up to 20 characters) — something you will recognise on a panel, such as “P1” or “Up home”.</p>
+                <p>The type image is used by default. You can upload your own picture or <strong>Choose from types</strong> to pick a different icon.</p>
+
+                <h2>Step 3: Options and DCC numbers</h2>
+                <p>Each row is one state the accessory can take (normal / switched, danger / clear, open / closed, and so on). For every row, enter the <strong>DCC number</strong> your command station uses for that state. Some types also ask for a <strong>direction</strong>.</p>
+                <p>Pre-built signals and points usually start with the right rows already; you fill in addresses. Custom and open/closed types let you <strong>Add Option</strong> if you need extra states.</p>
+                <figure class="doc-media">
+    
+    <div class="section-media-placeholder doc-media-placeholder">Screenshot: Accessory options table with DCC numbers</div>
+    
+    
+</figure>
+
+
+                <h2>Step 4: Save and repeat</h2>
+                <p>Click <strong>Create Accessory</strong>. Add the other points and signals you will place on a panel next. You can also create an accessory later from the panel editor if you realise something is missing — see <a href="/configuration/panels.html">Panels</a>.</p>
+
+                <h2 id="macros">Step 5: Macros (optional)</h2>
+                <p>A macro is a named combination of accessories — for example “set the yard road” or “clear for the main”. Macros appear at the top of the Control accessories list so you can fire several commands in one tap.</p>
+                <p>This is <em>not</em> automatic route setting. Routes that follow trains and sensors will be documented in a later chapter.</p>
+                <p><a class="btn btn-primary" href="https://dev.app.panelsd.cc/accessories/macros" target="_blank" rel="noopener noreferrer">Open macros on the Panels DCC website</a></p>
+                <ol>
+                    <li>Click <strong>Create New Macro</strong>.</li>
+                    <li>Give it a name and, if you like, a short description.</li>
+                    <li>Select the accessories that belong in the group.</li>
+                    <li>For each <strong>state combination</strong>, choose the position each accessory should take.</li>
+                    <li>Save. <strong>Location</strong> is filled in later from which panels use those accessories — it may be blank until a panel exists.</li>
+                </ol>
+                <figure class="doc-media">
+    
+    <div class="section-media-placeholder doc-media-placeholder">Screenshot: Create macro — accessories and state combinations</div>
+    
+    
+</figure>
+
+
+                <h2 id="dcc-table">Advanced: Table view (DCC audit)</h2>
+                <aside class="doc-tip-banner" role="note" aria-label="Skip if you only have a few accessories">
+                    <p><strong>You can skip this</strong> until you have enough accessories that addresses might clash. The card view is enough for a small layout.</p>
+                </aside>
+                <p>On the accessory list, switch <strong>Card View</strong> to <strong>Table View</strong> (desktop). The table is organised by <strong>DCC number</strong>: one row per address, showing accessory name, type, panel(s), option, and direction.</p>
+                <p>Use it to see which addresses are used by what, and to spot two accessories sharing a number by mistake. Click a name in the table to open that accessory.</p>
+                <figure class="doc-media">
+    
+    <div class="section-media-placeholder doc-media-placeholder">Screenshot: Accessory Table View — DCC numbers used by what</div>
+    
+    
+</figure>
+
+
+                <nav class="gs-pager" aria-label="Getting started sequence">
     <div class="gs-pager-slot gs-pager-slot--prev">
         
-        <a href="/getting-started/account.html" class="gs-pager-link gs-pager-link--prev">
+        <a href="/configuration/function-maps.html" class="gs-pager-link gs-pager-link--prev">
             <span class="gs-pager-kicker">← Previous</span>
-            <span class="gs-pager-title">Your PanelsDCC account</span>
+            <span class="gs-pager-title">Functions and function maps</span>
         </a>
         
     </div>
     <div class="gs-pager-slot gs-pager-slot--next">
         
-        <a href="/configuration/trains.html" class="gs-pager-link gs-pager-link--next">
+        <a href="/configuration/panels.html" class="gs-pager-link gs-pager-link--next">
             <span class="gs-pager-kicker">Next →</span>
-            <span class="gs-pager-title">Trains</span>
+            <span class="gs-pager-title">Panels</span>
         </a>
         
     </div>
 </nav>
 
+            </div>
         </div>
     </div>
 </div>

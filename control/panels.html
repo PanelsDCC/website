@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configuration — Panels DCC</title>
+<title>Control — Panels</title>
 <link rel="stylesheet" href="/style.css">
 
 </head>
@@ -26,8 +26,8 @@
         <aside class="docs-sidebar" aria-label="Guide navigation">
     <nav class="docs-sidebar-chapter-switcher" aria-label="Manual chapters">
         <a href="/getting-started/installation.html" class="docs-sidebar-ch-switch" title="Chapter 1 — Getting started"><span class="docs-sidebar-ch-switch-num">1</span><span class="docs-sidebar-ch-switch-label">Getting started</span></a>
-        <a href="/configuration/index.html" class="docs-sidebar-ch-switch is-active" title="Chapter 2 — Configuration" aria-current=&#34;page&#34;><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
-        <a href="/control/trains.html" class="docs-sidebar-ch-switch" title="Chapter 3 — Control"><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
+        <a href="/configuration/index.html" class="docs-sidebar-ch-switch" title="Chapter 2 — Configuration"><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
+        <a href="/control/trains.html" class="docs-sidebar-ch-switch is-active" title="Chapter 3 — Control" aria-current=&#34;page&#34;><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
         <a href="/system-admin/index.html" class="docs-sidebar-ch-switch" title="Chapter 4 — System admin"><span class="docs-sidebar-ch-switch-num">4</span><span class="docs-sidebar-ch-switch-label">System admin</span></a>
     </nav>
     <div class="sidebar-nav-box">
@@ -53,9 +53,9 @@
         </ol>
     </div>
 
-    <div class="sidebar-nav-box is-chapter-current">
+    <div class="sidebar-nav-box">
         <h2 class="sidebar-nav-box-title">
-            Chapter 2 — Configuration
+            <a href="/configuration/index.html" class="sidebar-nav-box-title-link">Chapter 2 — Configuration</a>
         </h2>
         <ol class="sidebar-nav-steps">
             <li class="sidebar-nav-step">
@@ -91,9 +91,9 @@
         </ol>
     </div>
 
-    <div class="sidebar-nav-box">
+    <div class="sidebar-nav-box is-chapter-current">
         <h2 class="sidebar-nav-box-title">
-            <a href="/control/trains.html" class="sidebar-nav-box-title-link">Chapter 3 — Control</a>
+            Chapter 3 — Control
         </h2>
         <ol class="sidebar-nav-steps">
             <li class="sidebar-nav-step">
@@ -102,8 +102,8 @@
             <li class="sidebar-nav-step">
                 <a class="sidebar-nav-row" href="/control/accessories.html"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
             </li>
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="/control/panels.html"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></a>
+            <li class="sidebar-nav-step is-current">
+                <span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">3</span><span class="sidebar-nav-label">Panels</span></span>
             </li>
         </ol>
     </div>
@@ -131,71 +131,46 @@
 
         <div class="getting-started-layout-main">
             <div class="full-width-section">
-                <div class="section-text">
-                    <h1>Chapter 2 — Configuration</h1>
-                    <p>Configuration happens on the <strong>Panels DCC website</strong> in a browser — on your sofa, at a desk, or anywhere you have internet. You do not need to be next to the layout. When you are ready to run trains, <strong>PanelsDCC Control</strong> on the Raspberry Pi uses what you have set up here.</p>
-                    <p>Everything is visual. There is no requirement to write scripts or edit configuration files. If you can click, type, and drag, you can add locomotives, accessories, and control panels.</p>
-                    <p><a class="btn btn-primary" href="https://dev.app.panelsd.cc" target="_blank" rel="noopener noreferrer">Open Panels DCC website</a></p>
-                    <p>Complete <strong><a href="/getting-started/installation.html">Getting started</a></strong> first (install, Wi‑Fi, Connect, <a href="/getting-started/first-train.html">first train</a>, and <a href="/getting-started/account.html">your account</a>) so Control can talk to your command station.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>Recommended order</h2>
-                    <ol>
-                        <li><a href="/configuration/trains.html">Trains</a> — add locomotives and their DCC numbers.</li>
-                        <li><a href="/configuration/function-maps.html">Functions and function maps</a> — icons for lights, horns, and other decoder features (optional until you want more than a basic throttle).</li>
-                        <li><a href="/configuration/accessories.html">Accessories</a> — points, signals, and other layout items.</li>
-                        <li><a href="/configuration/panels.html">Panels</a> — draw the diagram you will operate from, and link it to those accessories.</li>
-                    </ol>
-                    <p>Sensors, train detection, and route setting will be covered in later chapters. This chapter is the everyday setup path.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>1. Trains</h2>
-                    <p>Your cloud library of locomotives, coaches, and wagons: pictures, status, DCC address, decoder notes, and function icons. Quick-add from the UK library, or enter details by hand.</p>
-                    <p><a href="/configuration/trains.html">Open Configuration — Trains</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>2. Accessories</h2>
-                    <p>Create points, colour-light and semaphore signals, crossings, and custom items. Each state has a DCC number. Macros group several accessories so you can set them together later in Control.</p>
-                    <p><a href="/configuration/accessories.html">Open Configuration — Accessories</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>3. Panels</h2>
-                    <p>A panel is a control diagram of your layout — not a scale track plan. Place track, points, and signals, then link them to the accessories you have already created (or create a missing accessory without leaving the editor).</p>
-                    <p><a href="/configuration/panels.html">Open Configuration — Panels</a></p>
-                </div>
-            </div>
+                <h1>Panels</h1>
+                <p>Panels bring train driving and accessory control together on a visual signal-box style diagram of your layout.</p>
+                <p>Panels are available on tablet and desktop devices.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Device-local panel layouts">
+                    <p><strong>Important:</strong> panel layouts are stored locally per device and browser, so they do not sync between devices. Set up panel arrangement separately on each new tablet, desktop, or browser profile.</p>
+                </aside>
 
-            <nav class="gs-pager" aria-label="Getting started sequence">
+                <h2>1. Select a panel</h2>
+                <p>On the panels screen, choose the panel you want to operate.</p>
+                
+                <h2>2. Adjust zoom and workspace</h2>
+                <p>Use the zoom controls at the bottom-left to increase or decrease panel diagram size. This helps you balance layout visibility against space for floating train, macro, and accessory controls.</p>
+
+                <h2>3. Add train and macro controllers</h2>
+                <p>From the top-right controls, add train control panels and macros to the current panel view.</p>
+                <p>Train controllers work exactly like the train screen controls. You can drag them to position them where you need them.</p>
+
+                <h2>4. Accessory and macro controller behavior</h2>
+                <p>Macro and accessory controllers can be resized, moved, and pinned.</p>
+                <p>Pinning is what saves controller placement between sessions. A pinned controller reappears in the same position next time you open that panel on the same device and browser.</p>
+
+                <h2>5. Open accessory controls from the diagram</h2>
+                <p>You can open accessory controllers directly from the panel diagram: click an element such as a point or signal, and if an accessory is associated with it, the accessory controller appears temporarily for interaction.</p>
+                <p>You can also pin, drag, and resize these accessory controllers. A dotted line links each controller to its accessory so it is clear which layout element it controls.</p>
+
+                <nav class="gs-pager" aria-label="Getting started sequence">
     <div class="gs-pager-slot gs-pager-slot--prev">
         
-        <a href="/getting-started/account.html" class="gs-pager-link gs-pager-link--prev">
+        <a href="/control/accessories.html" class="gs-pager-link gs-pager-link--prev">
             <span class="gs-pager-kicker">← Previous</span>
-            <span class="gs-pager-title">Your PanelsDCC account</span>
+            <span class="gs-pager-title">Accessories</span>
         </a>
         
     </div>
     <div class="gs-pager-slot gs-pager-slot--next">
         
-        <a href="/configuration/trains.html" class="gs-pager-link gs-pager-link--next">
-            <span class="gs-pager-kicker">Next →</span>
-            <span class="gs-pager-title">Trains</span>
-        </a>
-        
     </div>
 </nav>
 
+            </div>
         </div>
     </div>
 </div>

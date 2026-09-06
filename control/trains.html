@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configuration — Panels DCC</title>
+<title>Control — Trains</title>
 <link rel="stylesheet" href="/style.css">
 
 </head>
@@ -26,8 +26,8 @@
         <aside class="docs-sidebar" aria-label="Guide navigation">
     <nav class="docs-sidebar-chapter-switcher" aria-label="Manual chapters">
         <a href="/getting-started/installation.html" class="docs-sidebar-ch-switch" title="Chapter 1 — Getting started"><span class="docs-sidebar-ch-switch-num">1</span><span class="docs-sidebar-ch-switch-label">Getting started</span></a>
-        <a href="/configuration/index.html" class="docs-sidebar-ch-switch is-active" title="Chapter 2 — Configuration" aria-current=&#34;page&#34;><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
-        <a href="/control/trains.html" class="docs-sidebar-ch-switch" title="Chapter 3 — Control"><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
+        <a href="/configuration/index.html" class="docs-sidebar-ch-switch" title="Chapter 2 — Configuration"><span class="docs-sidebar-ch-switch-num">2</span><span class="docs-sidebar-ch-switch-label">Configuration</span></a>
+        <a href="/control/trains.html" class="docs-sidebar-ch-switch is-active" title="Chapter 3 — Control" aria-current=&#34;page&#34;><span class="docs-sidebar-ch-switch-num">3</span><span class="docs-sidebar-ch-switch-label">Control</span></a>
         <a href="/system-admin/index.html" class="docs-sidebar-ch-switch" title="Chapter 4 — System admin"><span class="docs-sidebar-ch-switch-num">4</span><span class="docs-sidebar-ch-switch-label">System admin</span></a>
     </nav>
     <div class="sidebar-nav-box">
@@ -53,9 +53,9 @@
         </ol>
     </div>
 
-    <div class="sidebar-nav-box is-chapter-current">
+    <div class="sidebar-nav-box">
         <h2 class="sidebar-nav-box-title">
-            Chapter 2 — Configuration
+            <a href="/configuration/index.html" class="sidebar-nav-box-title-link">Chapter 2 — Configuration</a>
         </h2>
         <ol class="sidebar-nav-steps">
             <li class="sidebar-nav-step">
@@ -91,13 +91,13 @@
         </ol>
     </div>
 
-    <div class="sidebar-nav-box">
+    <div class="sidebar-nav-box is-chapter-current">
         <h2 class="sidebar-nav-box-title">
-            <a href="/control/trains.html" class="sidebar-nav-box-title-link">Chapter 3 — Control</a>
+            Chapter 3 — Control
         </h2>
         <ol class="sidebar-nav-steps">
-            <li class="sidebar-nav-step">
-                <a class="sidebar-nav-row" href="/control/trains.html"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></a>
+            <li class="sidebar-nav-step is-current">
+                <span class="sidebar-nav-row"><span class="sidebar-nav-num" aria-hidden="true">1</span><span class="sidebar-nav-label">Trains</span></span>
             </li>
             <li class="sidebar-nav-step">
                 <a class="sidebar-nav-row" href="/control/accessories.html"><span class="sidebar-nav-num" aria-hidden="true">2</span><span class="sidebar-nav-label">Accessories</span></a>
@@ -131,71 +131,62 @@
 
         <div class="getting-started-layout-main">
             <div class="full-width-section">
-                <div class="section-text">
-                    <h1>Chapter 2 — Configuration</h1>
-                    <p>Configuration happens on the <strong>Panels DCC website</strong> in a browser — on your sofa, at a desk, or anywhere you have internet. You do not need to be next to the layout. When you are ready to run trains, <strong>PanelsDCC Control</strong> on the Raspberry Pi uses what you have set up here.</p>
-                    <p>Everything is visual. There is no requirement to write scripts or edit configuration files. If you can click, type, and drag, you can add locomotives, accessories, and control panels.</p>
-                    <p><a class="btn btn-primary" href="https://dev.app.panelsd.cc" target="_blank" rel="noopener noreferrer">Open Panels DCC website</a></p>
-                    <p>Complete <strong><a href="/getting-started/installation.html">Getting started</a></strong> first (install, Wi‑Fi, Connect, <a href="/getting-started/first-train.html">first train</a>, and <a href="/getting-started/account.html">your account</a>) so Control can talk to your command station.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>Recommended order</h2>
-                    <ol>
-                        <li><a href="/configuration/trains.html">Trains</a> — add locomotives and their DCC numbers.</li>
-                        <li><a href="/configuration/function-maps.html">Functions and function maps</a> — icons for lights, horns, and other decoder features (optional until you want more than a basic throttle).</li>
-                        <li><a href="/configuration/accessories.html">Accessories</a> — points, signals, and other layout items.</li>
-                        <li><a href="/configuration/panels.html">Panels</a> — draw the diagram you will operate from, and link it to those accessories.</li>
-                    </ol>
-                    <p>Sensors, train detection, and route setting will be covered in later chapters. This chapter is the everyday setup path.</p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>1. Trains</h2>
-                    <p>Your cloud library of locomotives, coaches, and wagons: pictures, status, DCC address, decoder notes, and function icons. Quick-add from the UK library, or enter details by hand.</p>
-                    <p><a href="/configuration/trains.html">Open Configuration — Trains</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>2. Accessories</h2>
-                    <p>Create points, colour-light and semaphore signals, crossings, and custom items. Each state has a DCC number. Macros group several accessories so you can set them together later in Control.</p>
-                    <p><a href="/configuration/accessories.html">Open Configuration — Accessories</a></p>
-                </div>
-            </div>
-            <hr/>
-            <div class="full-width-section">
-                <div class="section-text">
-                    <h2>3. Panels</h2>
-                    <p>A panel is a control diagram of your layout — not a scale track plan. Place track, points, and signals, then link them to the accessories you have already created (or create a missing accessory without leaving the editor).</p>
-                    <p><a href="/configuration/panels.html">Open Configuration — Panels</a></p>
-                </div>
-            </div>
+                <h1>Trains</h1>
+                <p>Train operation in PanelsDCC is built around loading a locomotive into a control panel, then driving speed, direction, and functions from one clear interface.</p>
+                <img src="/images/train-control-annotated.png" alt="Control panel with annotations" class="section-media-img"/>
 
-            <nav class="gs-pager" aria-label="Getting started sequence">
+                <h2>1. Load and unload trains</h2>
+                <p>The number of control panels depends on your device. On phones, switch between control panels using the controls at the bottom. On tablets and desktops, scroll left and right to view multiple panels.</p>
+                <p>Each control panel works the same way. To load a train, choose <strong>Load from engine shed</strong> and select from your collection. If you already know the DCC address, choose the DCC number option and enter it directly. This is useful for quick tests and for locomotives not yet in your engine shed.</p>
+                <p>To unload a train from a control panel, click or tap the DCC number bubble in the top-right corner of that control panel.</p>
+
+                <h2>2. Control train speed</h2>
+                <p>Use the throttle to set speed. Quick speed-step buttons let you jump directly to <strong>0%</strong>, <strong>33%</strong>, <strong>66%</strong>, and <strong>100%</strong>.</p>
+
+                <h2>3. Control functions</h2>
+                <p>Six function buttons are shown beside the throttle. These are the first six functions in the locomotive configuration (normally F0-F5), unless you have reordered or removed functions in configuration.</p>
+                <p>Use <strong>All functions</strong> to open the full function list. This view hides the throttle. To return to the main control panel screen, click or tap the locomotive image at the top.</p>
+                <p>Function behavior depends on interaction type:</p>
+                <ul>
+                    <li><strong>Latching functions:</strong> quick tap or click to toggle on, tap again to toggle off.</li>
+                    <li><strong>Momentary functions:</strong> press and hold to activate; release to deactivate.</li>
+                </ul>
+
+                <h2>4. Child lock mode</h2>
+                <p>After loading a train into a control panel, double-click or double-tap the train name in the top-left corner to open the lock configuration popup.</p>
+                <p>You can choose what remains available in lock mode, including:</p>
+                <ul>
+                    <li>Disable throttle control</li>
+                    <li>Disable direction control</li>
+                    <li>Limit maximum speed (for example to 33%)</li>
+                    <li>Disable selected functions</li>
+                </ul>
+                <p>After choosing restrictions, set a PIN code to enable locking. When locked, the interface blocks navigation to other app areas, including other train panels.</p>
+                <p>To exit lock mode, tap the padlock icon in the top-right and enter the PIN. You can also refresh the browser or relaunch the app session.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Kiosk mode recommendation">
+                    <p><strong>Important:</strong> lock mode is an in-app control layer. For stronger protection on shared or public devices, combine it with the device's own kiosk or guided-access mode (for example, Apple Guided Access) so users cannot leave or refresh the app easily.</p>
+                </aside>
+
+                <nav class="gs-pager" aria-label="Getting started sequence">
     <div class="gs-pager-slot gs-pager-slot--prev">
         
-        <a href="/getting-started/account.html" class="gs-pager-link gs-pager-link--prev">
+        <a href="/configuration/panels.html" class="gs-pager-link gs-pager-link--prev">
             <span class="gs-pager-kicker">← Previous</span>
-            <span class="gs-pager-title">Your PanelsDCC account</span>
+            <span class="gs-pager-title">Configuration — Panels</span>
         </a>
         
     </div>
     <div class="gs-pager-slot gs-pager-slot--next">
         
-        <a href="/configuration/trains.html" class="gs-pager-link gs-pager-link--next">
+        <a href="/control/accessories.html" class="gs-pager-link gs-pager-link--next">
             <span class="gs-pager-kicker">Next →</span>
-            <span class="gs-pager-title">Trains</span>
+            <span class="gs-pager-title">Accessories</span>
         </a>
         
     </div>
 </nav>
 
+            </div>
         </div>
     </div>
 </div>
