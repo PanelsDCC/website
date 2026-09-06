@@ -1,0 +1,15 @@
+<%_
+const _src = typeof src !== 'undefined' && src ? src : '';
+const _label = typeof label !== 'undefined' && label ? label : 'Screenshot';
+const _alt = typeof alt !== 'undefined' && alt ? alt : _label;
+const _caption = typeof caption !== 'undefined' && caption ? caption : '';
+const _bp = typeof basePath !== 'undefined' ? basePath : '';
+_%>
+<figure class="doc-media">
+    <% if (_src) { %>
+    <img src="<%= _bp %><%= _src %>" alt="<%= _alt %>" class="section-media-img doc-media-img"/>
+    <% } else { %>
+    <div class="section-media-placeholder doc-media-placeholder">Screenshot: <%= _label %></div>
+    <% } %>
+    <% if (_caption) { %><figcaption class="doc-media-caption"><%= _caption %></figcaption><% } %>
+</figure>

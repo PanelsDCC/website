@@ -1,0 +1,96 @@
+<%- include('layout-start.ejs', { title: 'Configuration — Trains', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 2, configStep: 1 }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Trains</h1>
+
+                <p>You configure trains in your account on the <strong>Panels DCC website</strong> — in the cloud, from any browser, away from the layout if you like. Think of it as managing a <strong>library</strong> of your collection: locomotives, and also coaches and wagons if you want them recorded the same way.</p>
+                <%- include('doc-screenshot-placeholder.ejs', { src: '/images/train-library.png', alt: 'Train Management list with search, filters, and train cards', caption: 'Train Management — your collection as visual cards, with search and filters at the top.' }) %>
+                <p>The library is deliberately visual. Each item is a card with a picture and a short name, so when you later open <strong>PanelsDCC Control</strong> and choose <strong>Load from engine shed</strong>, you pick something you recognise rather than typing a DCC address from memory.</p>
+                <p>Once you have more than a handful of items, use the tools on the list page:</p>
+                <ul>
+                    <li><strong>Search</strong> — type part of a name, make, model, or DCC number.</li>
+                    <li><strong>Make</strong>, <strong>Type</strong>, and <strong>Status</strong> filters — narrow the grid (for example only Operational diesels from one manufacturer).</li>
+                </ul>
+                <p>On a phone, filters may sit behind a filters button rather than along the top of the page. Click a card to open that train for editing.</p>
+
+                <h2>How to configure a train</h2>
+                <p>Each train (or coach / wagon) holds several kinds of information:</p>
+                <ol>
+                    <li><strong>Metadata and picture</strong> — short and long names, make, model, type, status (for example Operational), and an image so the collection is easy to browse.</li>
+                    <li><strong>DCC fitting notes</strong> — whether the model is DCC ready or fitted, what decoder is in it, where the socket is, and similar notes for your own records.</li>
+                    <li><strong>DCC configuration</strong> — the address you drive it on, and the list of functions (lights, horn, and so on) with icons and names, not just F0, F1, F2…</li>
+                </ol>
+                <p>To make that practical, Panels includes a large library of <strong>currently UK</strong> trains and a library of <strong>function maps</strong> (ready-made lists of functions for common decoders and models). If your model is not in the train library, you can enter the details by hand and upload a picture. If no function map fits, you can build a new one, copy an existing map and change it, and upload your own icons.</p>
+                <p>The steps below walk through adding one item to your library. You can edit an existing train the same way: open it from the list, change what you need, and save.</p>
+
+                <h2>Step 1: Add New Train</h2>
+                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/trains" target="_blank" rel="noopener noreferrer">Open trains on the Panels DCC website</a></p>
+                <p>Sign in to the Panels DCC website if you are asked to. Open <strong>Trains</strong> (or use the link above).</p>
+                <p>Click <strong>Add New Train</strong>.</p>
+                <p>The new-train form opens with <strong>Quick add</strong> at the top and the main sections below.</p>
+
+                <h2>Step 2: Quick add, or fill in the details yourself</h2>
+                <p>At the top of the new-train form is <strong>Quick add</strong>. Start typing a description — a class, running number, catalogue code, or plain words such as “Class 66”. Matching entries from the UK train library appear as you type. Pick one and the form fills in short name, long name, make, model, type, and often a picture.</p>
+                <p>If nothing matches, fill the form yourself. The important fields are:</p>
+                <ul>
+                    <li><strong>Short Name</strong> (required, up to 20 characters) — the label you will see on the Control throttle and in the engine shed. Keep it short and distinctive if you have several similar locos.</li>
+                    <li><strong>Long Name</strong> — a fuller description for your own records.</li>
+                    <li><strong>Make</strong> and <strong>Model</strong> — manufacturer and catalogue or class detail; useful when filtering later.</li>
+                    <li><strong>Type</strong> — Steam Engine, Diesel Loco, EMU, Coach, Wagon, and so on. Coaches and wagons belong in the same library if you want them listed visually with the rest of the collection.</li>
+                    <li><strong>Status</strong> — for example Operational, Non operational, or Static. Use this to mark locos you are not currently running without deleting them.</li>
+                </ul>
+
+                <h2>Step 3: Picture</h2>
+                <p>A clear picture makes the engine shed and throttle much easier to use at a glance — especially on a tablet across the room from the layout.</p>
+                <p>You can:</p>
+                <ul>
+                    <li><strong>Upload</strong> a photo from your device, or</li>
+                    <li>Click <strong>Search for Images</strong>, browse the results, and choose one.</li>
+                </ul>
+                <p>If Quick add already attached an image, you can still replace it. Prefer a side-on or three-quarter view so the model is recognisable among similar liveries.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Train photograph background">
+                    <p><strong>Tip:</strong> use a picture of the train against a <strong>pure white background</strong>. That way the engine shed and Control throttle stay clean instead of busy track, carpet, or clutter showing through behind the model.</p>
+                    <p>If you photograph locos often, a small white box (or even a shallow tray lined with white card) is a quick way to get a consistent shot. Manufacturers and re-sellers use the same convention — we follow that standard so your collection looks at home beside library images from Quick add.</p>
+                </aside>
+
+                <h2>Step 4: DCC and decoders</h2>
+                <p>Enter the locomotive’s <strong>DCC Number</strong> (1–9999). This must match the address programmed on the decoder. Control uses this number when you load the train from the engine shed or when you enter the address directly for a quick test.</p>
+                <p><strong>DCC Status</strong> is a note for you — for example Ready, Fitted, No socket, or Incompatible. It does not change how Control drives the loco; it helps you remember which models are actually fitted and which are still analogue or unconverted.</p>
+                <p>Under <strong>DCC Decoders</strong> you can optionally record fitting detail for your own reference: socket location, socket type (for example 21 Pin or Next 18), chip model, and chip type (motor/function, multifunction sound, and so on). A locomotive can have more than one decoder entry if that matches how it is wired. None of this is required to drive — skip it if you only want the address and functions set for Control.</p>
+
+                <h2>Step 5: Configure functions</h2>
+                <p>If your train has functions — sounds, lights, and so on — you configure them with <strong>function maps</strong>.</p>
+                <p>A function map is a pre-configured list of functions you can assign to a train. Instead of specifying every function by hand, you load, reuse, and edit an existing map that is exact or close enough to what you need.</p>
+                <p>Every function also has icons for its on and off state. When you control the train, you click named functions with clear visual indicators — not a row of numbered keys. No more hunting for the paperwork that says which function does what. For example:</p>
+                <div class="doc-function-pair">
+                    <img src="<%= basePath %>/images/config/function-lights-off.svg" alt="Lights off"/>
+                    <img src="<%= basePath %>/images/config/function-lights-on.svg" alt="Lights on"/>
+                    <span class="doc-function-label">Lights (off / on)</span>
+                </div>
+                <div class="doc-function-pair">
+                    <img src="<%= basePath %>/images/config/function-horn-off.svg" alt="Horn off"/>
+                    <img src="<%= basePath %>/images/config/function-horn-on.svg" alt="Horn on"/>
+                    <span class="doc-function-label">Horn (off / on)</span>
+                </div>
+                <p>Before you finish configuring a train, browse the function maps library to find or set up the map you need. Many maps for DCC-fitted models from leading UK manufacturers are already provided.</p>
+                <p>Click <strong>Load Function Map</strong>, pick the map that matches your model, then adjust it if you need to. You can reorder the list so the functions you use most sit at the top. In Control, the <strong>first six</strong> appear on the main controller — and those can be whichever functions you want, not locked to F0–F5.</p>
+                <p>To configure your own functions and function maps, see <a href="<%= basePath %>/configuration/function-maps.html">Functions and function maps</a>.</p>
+                <%- include('doc-screenshot-placeholder.ejs', { src: '/images/train-control-annotated.png', alt: 'Control throttle with function buttons', caption: 'In Control, the first six functions sit beside the throttle.' }) %>
+
+                <h2>Step 6: Save and confirm</h2>
+                <p>Click <strong>Create Train</strong> (or <strong>Save Changes</strong> when editing). You should return to the train list with the new card visible — picture, short name, and key details as you left them.</p>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/configuration/index.html',
+                    pagerPrevTitle: 'Chapter 2 — Configuration',
+                    pagerNextHref: basePath + '/configuration/function-maps.html',
+                    pagerNextTitle: 'Functions and function maps'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>

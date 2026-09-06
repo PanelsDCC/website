@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="220" viewBox="0 0 150 220">
+    <!-- Signal Post -->
+    <rect x="60" y="120" width="20" height="100" fill="white" />
+
+    <!-- Signal outline -->
+    <path d="M 50,20 L 40,30 L 40,120 L 100,120 L 100,30 L 90,20 Z" fill="#2F2F30" stroke="#010101" strokeWidth="1" />
+
+    <!-- Green signal outer circle-->
+    <circle cx="70" cy="50" r="16" fill="#2F2F30" stroke="#010101" stroke-width="0.1" />
+
+    <!-- Green light-->
+    <circle cx="70" cy="50" r="14" z="10" fill="#519442" stroke="#010101" stroke-width="0.1" />
+
+    <!-- Red signal outer circle-->
+    <circle cx="70" cy="90" r="16" fill="#2F2F30" stroke="#010101" stroke-width="0.1" />
+
+    <!-- Red light-->
+    <circle cx="70" cy="90" r="14" z="10" fill="#E73C38" stroke="#010101" stroke-width="0.1" />
+
+</svg>

@@ -32,6 +32,6 @@ Build output includes HTML plus `style.css`, `images/`, `videos/` (if present), 
 
 - Getting started: `/getting-started/installation.html` (steps 1–5: installation → Wi‑Fi → Connect → first train → account)
 - Manual hub: `/manual/index.html`
-- Configuration: `/configuration/index.html`
+- Configuration: `/configuration/index.html` (trains, function maps, accessories, panels)
 - Control (manual chapter): `/control/index.html`
 - System admin: `/system-admin/index.html`
