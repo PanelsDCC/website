@@ -1,0 +1,96 @@
+<%- include('layout-start.ejs', { title: 'Configuration — Panels', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 2, configStep: 3 }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Panels</h1>
+                <p>A panel is the diagram you will operate from in <strong>PanelsDCC Control</strong> — a signal-box style picture of your layout, not a scale track plan. You draw it on the <strong>Panels DCC website</strong>, then link points and signals to the accessories you have already created.</p>
+                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/panels" target="_blank" rel="noopener noreferrer">Open panels on the Panels DCC website</a></p>
+                <%- include('doc-screenshot-placeholder.ejs', { src: '/images/panel-demo.png', alt: 'Example control panel diagram', caption: 'A finished panel is the diagram you operate from in Control.' }) %>
+
+                <h2>Step 1: Create a panel and name it</h2>
+                <p>On the panels list, click <strong>Create New Panel</strong>. Type a name at the top of the editor (and a description if you like). Width and height can wait — <strong>Resize to Fit</strong> later will tighten the canvas around what you have drawn.</p>
+                <%- include('doc-screenshot-placeholder.ejs', { label: 'New panel editor with name and ribbon' }) %>
+
+                <h2>Step 2: Place track from the toolbar</h2>
+                <p>The left toolbar is grouped into plain line, level crossing, and points. Click a piece to drop it on the canvas, then drag it into place. Pieces snap together when their ends are close.</p>
+                <div class="doc-icon-row">
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/curve.svg" alt="Curve"/>
+                        <span>Curve</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/dead-end.svg" alt="Dead end"/>
+                        <span>Dead end</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/point-normal.svg" alt="Normal point"/>
+                        <span>Normal point</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/point-straight.svg" alt="Point to straight"/>
+                        <span>To straight</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/point-siding.svg" alt="Point to siding"/>
+                        <span>To siding</span>
+                    </div>
+                    <div class="doc-icon-card">
+                        <img src="<%= basePath %>/images/config/level-crossing.svg" alt="Level crossing"/>
+                        <span>Level crossing</span>
+                    </div>
+                </div>
+                <ul>
+                    <li><strong>Straight</strong> — ordinary track.</li>
+                    <li><strong>Section</strong> — a labelled berth (the piece you copy later if you need the same berth on another diagram).</li>
+                    <li><strong>Curve</strong>, <strong>Diagonal</strong>, <strong>Dead End</strong>.</li>
+                    <li><strong>Points</strong> — Normal, To Straight, To Siding, Crossover.</li>
+                    <li><strong>Level crossing</strong>.</li>
+                </ul>
+
+                <h2>Step 3: Select, grow, flip, and rotate</h2>
+                <p>Click a piece to select it. The ribbon’s <strong>Transform</strong> group then becomes available:</p>
+                <ul>
+                    <li><strong>Grow</strong> / <strong>Shrink</strong> — lengthen or shorten a straight.</li>
+                    <li><strong>Flip H</strong> / <strong>Flip V</strong> — mirror the piece.</li>
+                    <li><strong>Rotate</strong> — turn through 90° steps (where the piece allows it).</li>
+                </ul>
+                <p>Keyboard shortcuts (when you are not typing in a field): <kbd>+</kbd> / <kbd>-</kbd> grow and shrink, <kbd>H</kbd> / <kbd>V</kbd> flip, <kbd>R</kbd> rotate, <kbd>C</kbd> configure, Delete to remove. Press <kbd>?</kbd> in the editor for the full list.</p>
+
+                <h2>Step 4: Configure — link or create an accessory</h2>
+                <p>Select a point or signal and click <strong>Configure</strong> (or double-click the piece). You can:</p>
+                <ul>
+                    <li><strong>Link</strong> an accessory you already created on the Accessories page, or</li>
+                    <li><strong>Create</strong> a new accessory without leaving the editor — handy when you realise a point has no DCC item yet.</li>
+                </ul>
+                <p>Markers on the diagram show which pieces still need configuration. Use <strong>Hide Config Status</strong> in the ribbon when you want a cleaner view.</p>
+                <%- include('doc-screenshot-placeholder.ejs', { label: 'Configure — link or create accessory' }) %>
+
+                <h2>Step 5: Save</h2>
+                <p>Click <strong>Save</strong> in the ribbon. Use <strong>Resize to Fit</strong> so unused canvas does not dominate the Control view. You can duplicate a whole panel from the panels list if you need a second diagram of the same area.</p>
+                <p>When Control has synced, open <a href="<%= basePath %>/control/panels.html">Chapter 3 — Panels</a> to operate the diagram. Panel arrangement on each tablet or browser is local to that device.</p>
+
+                <h2 id="copy-sections">Advanced: Copy and paste sections</h2>
+                <aside class="doc-tip-banner" role="note" aria-label="Skip copy-paste on a first panel">
+                    <p><strong>You can skip this</strong> on a first panel. Copying sections matters when the same stretch of line appears on more than one diagram (for example a station box and a fiddle-yard box).</p>
+                </aside>
+                <p>A <strong>Section</strong> is the labelled track berth from the toolbar — not a plain Straight. Select one section, then:</p>
+                <ul>
+                    <li>Right-click and choose <strong>Copy section</strong>, or press Ctrl/Cmd+C.</li>
+                    <li>Paste with Ctrl/Cmd+V, or right-click and <strong>Paste section</strong>.</li>
+                </ul>
+                <p>Paste on the same panel, or open another panel in the same browser tab and paste there. The copy remembers the section’s name and settings for that session.</p>
+                <%- include('doc-screenshot-placeholder.ejs', { label: 'Context menu — Copy section / Paste section' }) %>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/configuration/accessories.html',
+                    pagerPrevTitle: 'Accessories',
+                    pagerNextHref: basePath + '/control/trains.html',
+                    pagerNextTitle: 'Chapter 3 — Control'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>

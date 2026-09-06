@@ -1,0 +1,71 @@
+<%- include('layout-start.ejs', { title: 'Configuration — Functions and function maps', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 2, configStep: 1, configSub: 'function-maps' }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Functions and function maps</h1>
+                <p>Most locomotives only need you to <strong>Load Function Map</strong> on the <a href="<%= basePath %>/configuration/trains.html">train form</a>. Use this page when you want to browse the library, adapt a map for your own trains, or understand how functions work under the hood.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Optional for a first locomotive">
+                    <p><strong>You can skip this at first.</strong> Add a train, load an existing map, and come back here if nothing quite matches — or if you want to tidy icons and order across several locos.</p>
+                </aside>
+
+                <h2 id="function-maps">Function maps</h2>
+                <p>A <strong>function map</strong> is a ready-made list of functions for a decoder or model (often matching a manufacturer’s numbering). Instead of wiring up F0, F1, F2 by hand for every locomotive, you load a map that already names and icons those slots.</p>
+                <p>Panels DCC includes a large — and continuously growing — library of function maps for off-the-shelf DCC-fitted models.</p>
+                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/functionMaps" target="_blank" rel="noopener noreferrer">Open function maps on the Panels DCC website</a></p>
+                <%- include('doc-screenshot-placeholder.ejs', { src: '/images/function-maps.png', alt: 'Function Maps library with type, manufacturer, and created-by filters, search, and map cards', caption: 'Function Maps — browse the library as cards. Filter by type, manufacturer, or who created the map, and search by name, make, or scale.' }) %>
+                <p>Click a card to open that map and browse its functions. From there you can make a version for your own trains, or create a new map of your own.</p>
+
+                <h2>Creating your own map</h2>
+                <p>If you need a new map, start by finding an existing one that is as close as possible to what you want. That saves a lot of time.</p>
+                <p>You are looking for the <strong>list of functions</strong> — not necessarily in the right order. For example, many steam engines with sound share a similar set of sound functions, even when manufacturers arrange them differently. Manufacturers also have their own preferences for numbering and naming, so a map from the same brand is often a better starting point than one that merely looks similar.</p>
+                <p>When you build or edit a map, you pick each entry from the <strong>function library</strong> — the shared pool of named icons with on and off pictures. Prefer those existing functions and customise them where you can (there is a good generic lights icon, and general-purpose icons if you are stuck). You <em>can</em> add your own function, but that means creating pictures for both the on and off states, so it is usually better to reuse and adapt what is already there.</p>
+
+                <aside class="doc-tip-banner" role="note" aria-label="What a function is" id="functions">
+                    <p><strong>What is a function?</strong> A function is one decoder feature — lights, horn, coupling, a sound effect, and so on — shown as a named button with icons instead of a bare F number.</p>
+                    <p>Each function has two pictures: one for <strong>off</strong> and one for <strong>on</strong>, so in Control you can see at a glance whether it is active.</p>
+                    <p>Functions also have a behaviour type:</p>
+                    <ul>
+                        <li><strong>Latching</strong> — tap once to turn on, tap again to turn off. The feature stays in that state until you change it. Lights are usually latching: you turn them on for a while and leave them.</li>
+                        <li><strong>Momentary</strong> — the feature is only on while you hold the button; release and it stops. Horns and many sound effects are momentary — you would not want them stuck on after a tap.</li>
+                    </ul>
+                    <div class="doc-function-pair">
+                        <img src="<%= basePath %>/images/config/function-lights-off.svg" alt="Lights off"/>
+                        <img src="<%= basePath %>/images/config/function-lights-on.svg" alt="Lights on"/>
+                        <span class="doc-function-label">Lights — latching (off / on)</span>
+                    </div>
+                    <div class="doc-function-pair">
+                        <img src="<%= basePath %>/images/config/function-horn-off.svg" alt="Horn off"/>
+                        <img src="<%= basePath %>/images/config/function-horn-on.svg" alt="Horn on"/>
+                        <span class="doc-function-label">Horn — momentary (off / on)</span>
+                    </div>
+                    <p>Getting latching vs momentary right matters. If a horn is set as latching by mistake, one tap leaves it sounding until you tap again. If lights are momentary, they only work while you hold the button.</p>
+                </aside>
+
+                <h2>In the map editor</h2>
+                <p>Click <strong>Add New Function Map</strong> for a blank map, or open a close match and make a copy you can change. In the editor you can:</p>
+                <ul>
+                    <li>Add, remove, and drag rows to set which functions sit on which F numbers — and in which order.</li>
+                    <li>Click an icon to open the picker. Search the library, then apply <strong>icon only</strong> or <strong>icon, name, and type</strong>.</li>
+                    <li>Give the map a name and description so you can find it later.</li>
+                </ul>
+                <p>Remember: the <strong>first six</strong> functions on a train are the ones shown beside the throttle in Control. Put the ones you use most at the top — you can do that on the map, or after you load the map onto a train.</p>
+                <p>Save when you are happy. You can then load that map onto any of your trains from the train form.</p>
+
+                <h2>Add a custom function (optional)</h2>
+                <p>Only needed when nothing in the library fits — even after searching for a generic icon.</p>
+                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/functions" target="_blank" rel="noopener noreferrer">Open functions on the Panels DCC website</a></p>
+                <p>Click <strong>Add New Function</strong>. Give it a name, choose latching or momentary, and supply icons for off and on. Your function then appears in the picker when you edit a map or a train.</p>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/configuration/trains.html',
+                    pagerPrevTitle: 'Trains',
+                    pagerNextHref: basePath + '/configuration/accessories.html',
+                    pagerNextTitle: 'Accessories'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>
