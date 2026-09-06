@@ -38,25 +38,35 @@ require_tools() {
   fi
 }
 
+# Prefer Architecture: all (current Control/Connect packages), then this machine's arch.
 pick_asset_url() {
   local repo="$1"
   local release_json="$2"
 
-  local pattern
+  local arch_pattern
   case "${ARCH}" in
-    arm64) pattern='(arm64|aarch64|all)\.deb$' ;;
-    armhf) pattern='(armhf|armv7|all)\.deb$' ;;
-    amd64) pattern='(amd64|x86_64|all)\.deb$' ;;
-    *) pattern='all\.deb$' ;;
+    arm64) arch_pattern='_(arm64|aarch64)\.deb$' ;;
+    armhf) arch_pattern='_(armhf|armv7)\.deb$' ;;
+    amd64) arch_pattern='_(amd64|x86_64)\.deb$' ;;
+    *) arch_pattern='' ;;
   esac
 
   local url
-  url="$(echo "${release_json}" | jq -r --arg pattern "${pattern}" '
+  url="$(echo "${release_json}" | jq -r '
     [.assets[]
-      | select(.name | test($pattern; "i"))
+      | select(.name | test("_all\\.deb$"; "i"))
       | .browser_download_url
     ] | first // empty
   ')"
+
+  if [[ -z "${url}" && -n "${arch_pattern}" ]]; then
+    url="$(echo "${release_json}" | jq -r --arg pattern "${arch_pattern}" '
+      [.assets[]
+        | select(.name | test($pattern; "i"))
+        | .browser_download_url
+      ] | first // empty
+    ')"
+  fi
 
   if [[ -z "${url}" ]]; then
     url="$(echo "${release_json}" | jq -r '
@@ -68,7 +78,7 @@ pick_asset_url() {
   fi
 
   if [[ -z "${url}" ]]; then
-    echo "No .deb asset found for ${repo}."
+    echo "No .deb asset found for ${repo} (dpkg arch ${ARCH})."
     exit 1
   fi
 
@@ -88,8 +98,10 @@ download_latest_deb() {
   tag="$(echo "${release_json}" | jq -r '.tag_name')"
   local asset_url
   asset_url="$(pick_asset_url "${repo}" "${release_json}")"
+  local asset_name
+  asset_name="$(basename "${asset_url}")"
 
-  log "Downloading ${repo} ${tag}..."
+  log "Downloading ${repo} ${tag} (${asset_name}) for ${ARCH}..."
   curl -fL "${asset_url}" -o "${out_file}"
 }
 
@@ -99,20 +111,16 @@ install_deb() {
   apt-get install -y "${deb_file}"
 }
 
-maybe_enable_connect_service() {
-  if systemctl list-unit-files | grep -q '^panelsdcc-connect\.service'; then
-    log "Enabling and starting panelsdcc-connect.service..."
-    systemctl enable --now panelsdcc-connect.service
-    return
-  fi
-
-  if systemctl list-unit-files | grep -q '^connect\.service'; then
-    log "Enabling and starting connect.service..."
-    systemctl enable --now connect.service
-    return
-  fi
-
-  log "No known Connect service unit found; skipping service enablement."
+maybe_enable_service() {
+  local unit
+  for unit in "$@"; do
+    if systemctl list-unit-files | grep -q "^${unit}\\.service"; then
+      log "Enabling and starting ${unit}.service..."
+      systemctl enable --now "${unit}.service"
+      return
+    fi
+  done
+  log "No known service unit found among: $* — skipping service enablement."
 }
 
 create_desktop_launcher() {
@@ -175,7 +183,8 @@ main() {
 
   install_deb "${connect_deb}"
   install_deb "${control_deb}"
-  maybe_enable_connect_service
+  maybe_enable_service panelsdcc-connect connect
+  maybe_enable_service panelsdcc-control
   maybe_create_desktop_shortcuts
 
   local host_name
