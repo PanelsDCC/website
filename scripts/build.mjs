@@ -44,7 +44,7 @@ function buildAll() {
     copyRecursive(path.join(root, "videos"), path.join(distDir, "videos"));
   if (fs.existsSync(path.join(root, "style.css")))
     fs.copyFileSync(path.join(root, "style.css"), path.join(distDir, "style.css"));
-  for (const f of ["CNAME", "install.sh"]) {
+  for (const f of ["CNAME", "install.sh", "vendor-data"]) {
     const p = path.join(root, f);
     if (fs.existsSync(p)) fs.copyFileSync(p, path.join(distDir, f));
   }

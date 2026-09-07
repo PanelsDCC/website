@@ -1,0 +1,82 @@
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============PANELS_DCC=="
+
+--===============PANELS_DCC==
+Content-Type: text/x-shellscript; charset="us-ascii"
+
+#!/bin/bash
+set -euo pipefail
+
+LOG=/var/log/panels-dcc-vendor.log
+exec > >(tee -a "$LOG") 2>&1
+
+echo "[panels-dcc-vendor] starting at $(date -Is)"
+
+wait_for_network() {
+  echo "[panels-dcc-vendor] waiting for network..."
+  local i
+  for i in $(seq 1 90); do
+    if getent hosts deb.debian.org >/dev/null 2>&1 || getent hosts archive.raspberrypi.com >/dev/null 2>&1; then
+      echo "[panels-dcc-vendor] network ready"
+      return 0
+    fi
+    sleep 2
+  done
+  echo "[panels-dcc-vendor] WARNING: DNS not ready after wait; continuing anyway"
+}
+
+wait_for_clock() {
+  echo "[panels-dcc-vendor] waiting for NTP / sane system clock..."
+  # Prefer systemd's NTP wait if available
+  if systemctl start systemd-time-wait-sync.service 2>/dev/null; then
+    echo "[panels-dcc-vendor] systemd-time-wait-sync started"
+  fi
+
+  local i year synced
+  for i in $(seq 1 120); do
+    synced="$(timedatectl show -p NTPSynchronized --value 2>/dev/null || echo no)"
+    year="$(date -u +%Y)"
+    # Reject the classic first-boot 1970 clock that breaks apt OpenPGP "Not live until..."
+    if [[ "$synced" == "yes" && "$year" -ge 2024 ]]; then
+      echo "[panels-dcc-vendor] clock OK: $(date -Is) (NTPSynchronized=$synced)"
+      return 0
+    fi
+    if [[ "$year" -ge 2024 && "$i" -ge 15 ]]; then
+      # Clock looks sane even if NTP flag not set yet
+      echo "[panels-dcc-vendor] clock looks sane without NTP flag: $(date -Is)"
+      return 0
+    fi
+    sleep 2
+  done
+  echo "[panels-dcc-vendor] WARNING: clock still suspicious ($(date -Is)); apt may fail"
+}
+
+wait_for_network
+wait_for_clock
+
+export DEBIAN_FRONTEND=noninteractive
+echo "[panels-dcc-vendor] apt-get update"
+apt-get update -y
+
+echo "[panels-dcc-vendor] apt-get dist-upgrade"
+apt-get dist-upgrade -y
+
+echo "[panels-dcc-vendor] running Panels DCC installer"
+curl -fsSL https://panelsd.cc/install.sh | bash
+
+echo "[panels-dcc-vendor] finished at $(date -Is)"
+
+# Reboot only after install completes. Vendor scripts are once-per-instance;
+# rebooting earlier would skip the installer on the next boot.
+if [[ -f /var/run/reboot-required ]]; then
+  echo "[panels-dcc-vendor] /var/run/reboot-required present — rebooting"
+  if [[ -f /var/run/reboot-required.pkgs ]]; then
+    echo "[panels-dcc-vendor] packages requesting reboot:"
+    cat /var/run/reboot-required.pkgs || true
+  fi
+  systemctl reboot
+fi
+
+echo "[panels-dcc-vendor] no reboot required"
+
+--===============PANELS_DCC==--

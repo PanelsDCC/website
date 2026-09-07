@@ -4,6 +4,7 @@ set -euo pipefail
 
 CONNECT_REPO="PanelsDCC/connect"
 CONTROL_REPO="PanelsDCC/control"
+CONTROL_DIR="/usr/share/panelsdcc-control"
 TMP_DIR="$(mktemp -d)"
 ARCH="$(dpkg --print-architecture)"
 
@@ -24,18 +25,8 @@ require_root() {
 }
 
 require_tools() {
-  local missing=0
-  for cmd in curl jq dpkg apt-get; do
-    if ! command -v "${cmd}" >/dev/null 2>&1; then
-      echo "Missing required command: ${cmd}"
-      missing=1
-    fi
-  done
-  if [[ "${missing}" -ne 0 ]]; then
-    echo "Installing required packages..."
-    apt-get update
-    apt-get install -y curl jq
-  fi
+  log "Installing required packages (curl, jq, nodejs, npm)..."
+  apt-get install -y curl jq nodejs npm
 }
 
 # Prefer Architecture: all (current Control/Connect packages), then this machine's arch.
@@ -111,16 +102,59 @@ install_deb() {
   apt-get install -y "${deb_file}"
 }
 
+# Published control .debs skip npm install when npm is missing (nodejs != npm on Raspberry Pi OS).
+install_control_npm() {
+  if [[ ! -f "${CONTROL_DIR}/package.json" ]]; then
+    log "Control not found at ${CONTROL_DIR}; skipping npm install."
+    return
+  fi
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm is required but was not found after installing the npm package."
+    exit 1
+  fi
+  log "Installing Control Node.js dependencies in ${CONTROL_DIR}..."
+  (cd "${CONTROL_DIR}" && npm install --omit=dev --production)
+}
+
 maybe_enable_service() {
   local unit
   for unit in "$@"; do
     if systemctl list-unit-files | grep -q "^${unit}\\.service"; then
       log "Enabling and starting ${unit}.service..."
+      systemctl daemon-reload
       systemctl enable --now "${unit}.service"
+      systemctl restart "${unit}.service"
       return
     fi
   done
   log "No known service unit found among: $* — skipping service enablement."
+}
+
+# Raspberry Pi OS no longer defaults to user "pi". Prefer the sudo invoker,
+# then UID 1000 (Imager customisation / first local user), then any Desktop home.
+detect_desktop_user() {
+  local candidate
+
+  if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]] && id -u "${SUDO_USER}" >/dev/null 2>&1; then
+    echo "${SUDO_USER}"
+    return
+  fi
+
+  candidate="$(getent passwd 1000 | cut -d: -f1 || true)"
+  if [[ -n "${candidate}" ]]; then
+    echo "${candidate}"
+    return
+  fi
+
+  local home
+  for home in /home/*; do
+    [[ -d "${home}" ]] || continue
+    candidate="$(basename "${home}")"
+    if id -u "${candidate}" >/dev/null 2>&1; then
+      echo "${candidate}"
+      return
+    fi
+  done
 }
 
 create_desktop_launcher() {
@@ -142,38 +176,41 @@ EOF
 }
 
 maybe_create_desktop_shortcuts() {
-  local desktop_user="pi"
+  local desktop_user
+  desktop_user="$(detect_desktop_user || true)"
 
-  if ! id -u "${desktop_user}" >/dev/null 2>&1; then
-    log "User '${desktop_user}' not found; skipping desktop shortcuts."
+  if [[ -z "${desktop_user}" ]]; then
+    log "Could not detect a desktop user; skipping desktop shortcuts."
     return
   fi
 
   local desktop_dir="/home/${desktop_user}/Desktop"
   if [[ ! -d "${desktop_dir}" ]]; then
-    log "Desktop folder not found for '${desktop_user}'; skipping desktop shortcuts."
-    return
+    log "Creating Desktop folder for '${desktop_user}'..."
+    mkdir -p "${desktop_dir}"
   fi
 
   local host_name
   host_name="$(hostname)"
   local connect_url="http://${host_name}:9000/"
   local control_url="http://${host_name}/"
+  local desktop_group
+  desktop_group="$(id -gn "${desktop_user}")"
 
   log "Creating desktop launchers for user '${desktop_user}'..."
   create_desktop_launcher "${desktop_dir}/PanelsDCC Connect.desktop" "PanelsDCC Connect" "${connect_url}"
   create_desktop_launcher "${desktop_dir}/PanelsDCC Control.desktop" "PanelsDCC Control" "${control_url}"
 
   chmod 755 "${desktop_dir}/PanelsDCC Connect.desktop" "${desktop_dir}/PanelsDCC Control.desktop"
-  chown "${desktop_user}:${desktop_user}" "${desktop_dir}/PanelsDCC Connect.desktop" "${desktop_dir}/PanelsDCC Control.desktop"
+  chown "${desktop_user}:${desktop_group}" "${desktop_dir}" "${desktop_dir}/PanelsDCC Connect.desktop" "${desktop_dir}/PanelsDCC Control.desktop"
 }
 
 main() {
   require_root
-  require_tools
 
   export DEBIAN_FRONTEND=noninteractive
   apt-get update
+  require_tools
 
   local connect_deb="${TMP_DIR}/connect.deb"
   local control_deb="${TMP_DIR}/control.deb"
@@ -183,6 +220,7 @@ main() {
 
   install_deb "${connect_deb}"
   install_deb "${control_deb}"
+  install_control_npm
   maybe_enable_service panelsdcc-connect connect
   maybe_enable_service panelsdcc-control
   maybe_create_desktop_shortcuts

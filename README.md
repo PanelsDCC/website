@@ -20,7 +20,7 @@ For local-only rebuilds (no git push), use:
 npm run build:local
 ```
 
-Build output includes HTML plus `style.css`, `images/`, `videos/` (if present), `CNAME`, and `install.sh`.
+Build output includes HTML plus `style.css`, `images/`, `videos/` (if present), `CNAME`, `install.sh`, and `vendor-data`.
 
 ## Edit
 
