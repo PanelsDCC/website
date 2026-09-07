@@ -154,6 +154,7 @@
 
             <h3>Option A: New SD card with Raspberry Pi Imager</h3>
             <p>Follow the standard <a href="https://www.raspberrypi.com/software/" target="_blank">Raspberry Pi Imager</a> flow for the latest <strong>Raspberry Pi OS (64-bit)</strong>. Choose <strong>Raspberry Pi OS (Desktop)</strong> if you plan to use a screen, keyboard, and mouse on the Pi.</p>
+            <p>Set hostname, user, Wi‑Fi, and SSH in Imager as usual. Current Raspberry Pi OS no longer runs a custom first-boot command from Imager, so after writing the card you copy a <strong>vendor-data</strong> file onto the boot partition. That file updates the Pi and then installs PanelsDCC automatically on first boot.</p>
             <p><strong>In Imager, step by step:</strong></p>
             <ol>
                 <li>Open Raspberry Pi Imager.</li>
@@ -164,17 +165,20 @@
                 <li>On the <strong>General</strong> tab, set hostname, username/password, Wi‑Fi, locale, and timezone.</li>
                 <li>For hostname, we recommend <strong>panels-dcc</strong> so your URLs are easy to remember.</li>
                 <li>On the <strong>Services</strong> tab, enable SSH if you want remote access (optional).</li>
-                <li>On the <strong>Options</strong> tab (wording may vary), enable the first-boot command / run command field.</li>
-                <li>Paste this into that field:</li>
+                <li>Save settings and write the image to the card. Leave the card in your computer — do not boot the Pi yet.</li>
             </ol>
-            <div class="install-command-block">
-                <pre class="install-command" tabindex="0"><code class="install-command-code">curl -fsSL https://panelsd.cc/install.sh | sudo bash</code></pre>
-            </div>
-            <ol start="11">
-                <li>Save settings and write the image to the card.</li>
-                <li>Boot the Pi and wait a few minutes for first-boot install to finish.</li>
+            <p><strong>Before first boot:</strong></p>
+            <ol>
+                <li>Download the PanelsDCC vendor-data file:</li>
             </ol>
-            <p>When the install script completes, continue to <strong>Step 2</strong>.</p>
+            <p class="install-download"><a class="btn btn-primary" href="/vendor-data" download="vendor-data">Download vendor-data</a></p>
+            <ol start="2">
+                <li>Open the SD card’s boot partition on this computer. It is usually labelled <strong>bootfs</strong>. This folder should contain files like <code>user-data</code> and <code>meta-data</code>.</li>
+                <li>Copy the file there as exactly <strong>vendor-data</strong> (no filename extension). If your browser saved it as <code>vendor-data.txt</code>, rename it.</li>
+                <li>Eject the card, put it in the Pi, and boot. For install to succeed the Pi must be able to reach the internet — plug it into a router, or make sure it joins the Wi‑Fi you set in Imager.</li>
+                <li>Leave the Pi running. First boot updates the OS, installs PanelsDCC, and may reboot once. This can take 15 to 30 minutes.</li>
+            </ol>
+            <p>There is no on-screen “finished” message. After waiting, go to <strong>Step 2</strong> — if Connect and Control open in the browser, the install has succeeded. If they do not load yet, wait a bit longer and try again.</p>
 
             <h3>Option B: Pi already running Raspberry Pi OS</h3>
             <p>If the Pi is already set up, install the latest <strong>PanelsDCC Connect</strong> and <strong>PanelsDCC Control</strong> with one command:</p>
