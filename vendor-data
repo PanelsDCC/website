@@ -76,6 +76,8 @@ APT_SUMMARY_RE = re.compile(
 GET_RE = re.compile(r"^Get:\d+\s+")
 UNPACKING_RE = re.compile(r"^Unpacking\s+")
 SETTING_UP_RE = re.compile(r"^Setting up\s+")
+SETTING_UP_CONNECT_RE = re.compile(r"^Setting up panelsdcc-connect\b")
+SETTING_UP_CONTROL_RE = re.compile(r"^Setting up panelsdcc-control\b")
 
 # Coarse stage weights (sum to 100). Tuned so panels installer dominates.
 STAGE_WEIGHTS = {
@@ -83,8 +85,8 @@ STAGE_WEIGHTS = {
     "network": 2,
     "clock": 1,
     "apt_update": 5,
-    "dist_upgrade": 15,
-    "panels_installer": 70,
+    "dist_upgrade": 10,
+    "panels_installer": 75,
     "finished": 5,
 }
 
@@ -108,8 +110,25 @@ STAGE_LABELS = {
     "finished": "Finished",
 }
 
+# Ordered install.sh / package markers → user-facing detail (ladder for overall %).
+INSTALL_LADDER = [
+    "Starting PanelsDCC installer",
+    "Installing required packages",
+    "Downloading PanelsDCC Connect",
+    "Downloading PanelsDCC Control",
+    "Installing PanelsDCC Connect",
+    "Downloading JMRI",
+    "Extracting JMRI",
+    "Starting PanelsDCC Connect",
+    "Installing PanelsDCC Control",
+    "Setting up PanelsDCC Control",
+    "Installing Control dependencies",
+    "Creating desktop shortcuts",
+    "Installation complete",
+]
+
 INSTALL_SUBSTEPS = [
-    ("Installing required packages", "Installing required packages (curl, jq, nodejs, npm)"),
+    ("Installing required packages", "Installing required packages"),
     ("Fetching latest release metadata for PanelsDCC/connect", "Downloading PanelsDCC Connect"),
     ("Downloading PanelsDCC/connect", "Downloading PanelsDCC Connect"),
     ("Fetching latest release metadata for PanelsDCC/control", "Downloading PanelsDCC Control"),
@@ -152,7 +171,6 @@ class AptWindow:
         label, cur, total = self.phase()
         if not label or total <= 0:
             return None
-        # Map download / unpack / configure into 0–33 / 33–66 / 66–100 within apt window
         if label.startswith("Downloading"):
             return int(33 * cur / total)
         if label.startswith("Unpacking"):
@@ -169,10 +187,10 @@ class ProgressParser:
     error: Optional[str] = None
     connect_ready: bool = False
     handover: bool = False
+    prefer_alt_port: bool = False
     _max_overall: int = 0
 
     def feed(self, line: str) -> None:
-        # Strip CR and common ANSI noise for matching; keep original-ish text for markers
         clean = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", line).rstrip("\r\n")
         if not clean:
             return
@@ -189,12 +207,15 @@ class ProgressParser:
             self.stage = "clock"
         elif "[panels-dcc-vendor] apt-get update" in clean:
             self.stage = "apt_update"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
         elif "[panels-dcc-vendor] apt-get dist-upgrade" in clean:
             self.stage = "dist_upgrade"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
         elif "[panels-dcc-vendor] running Panels DCC installer" in clean:
             self.stage = "panels_installer"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
             self.install_detail = "Starting PanelsDCC installer"
         elif "[panels-dcc-vendor] finished" in clean:
@@ -211,7 +232,32 @@ class ProgressParser:
         elif "Handing over port 80 to Control" in clean or "Handing over to Control" in clean:
             self.handover = True
             self.connect_ready = True
+            self.prefer_alt_port = True
             self.install_detail = "Handing over to Control"
+        elif "Moving progress UI off port 80" in clean:
+            self.prefer_alt_port = True
+            self.handover = False  # still installing Control
+
+        # PanelsDCC package + JMRI markers (long Connect setup)
+        if SETTING_UP_CONNECT_RE.match(clean):
+            self.apt.active = False
+            self.prefer_alt_port = True
+            self.install_detail = "Installing PanelsDCC Connect"
+            self.connect_ready = False
+        elif "JMRI is not installed" in clean or "Downloading JMRI" in clean:
+            self.apt.active = False
+            self.install_detail = "Downloading JMRI"
+        elif "Extracting JMRI" in clean:
+            self.install_detail = "Extracting JMRI"
+        elif "JMRI" in clean and "installed successfully" in clean:
+            self.install_detail = "Starting PanelsDCC Connect"
+        elif "Starting panelsdcc-connect service" in clean:
+            self.install_detail = "Starting PanelsDCC Connect"
+            self.connect_ready = True
+        elif SETTING_UP_CONTROL_RE.match(clean):
+            self.apt.active = False
+            self.install_detail = "Setting up PanelsDCC Control"
+            self.connect_ready = True
 
         if clean.startswith("[panelsdcc-install] "):
             msg = clean[len("[panelsdcc-install] ") :]
@@ -222,14 +268,13 @@ class ProgressParser:
                         self.apt.active = False
                     break
             if msg.startswith("Installing connect.deb"):
+                self.install_detail = "Installing PanelsDCC Connect"
+            if msg.startswith("Installing control.deb"):
                 self.connect_ready = True
-            if (
-                msg.startswith("Installing control.deb")
-                or msg.startswith("Stopping install progress")
-                or msg.startswith("Handing over")
-            ):
+                self.install_detail = "Installing PanelsDCC Control"
+            if msg.startswith("Stopping install progress") or msg.startswith("Handing over"):
                 self.connect_ready = True
-                self.handover = True
+                self.prefer_alt_port = True
 
         m = APT_SUMMARY_RE.match(clean)
         if m:
@@ -241,7 +286,9 @@ class ProgressParser:
                 self.apt.gets += 1
             elif UNPACKING_RE.match(clean):
                 self.apt.unpacking += 1
-            elif SETTING_UP_RE.match(clean):
+            elif SETTING_UP_RE.match(clean) and not SETTING_UP_CONNECT_RE.match(clean) and not SETTING_UP_CONTROL_RE.match(
+                clean
+            ):
                 self.apt.setting_up += 1
 
     def feed_text(self, text: str) -> None:
@@ -256,7 +303,6 @@ class ProgressParser:
                 hostname = "panels-dcc"
 
         overall = self._compute_overall()
-        # Monotonic: never report a lower overall than before
         if overall < self._max_overall:
             overall = self._max_overall
         else:
@@ -275,19 +321,41 @@ class ProgressParser:
             "hostname": host,
             "connect_ready": self.connect_ready or self.done,
             "handover": self.handover or self.done,
+            "prefer_alt_port": self.prefer_alt_port or self.stage not in ("starting", "network", "clock"),
             "connect_url": f"http://{host}:9000/",
             "control_url": f"http://{host}/",
+            "progress_url": f"http://{host}:8080/",
         }
 
     def _detail_and_phase(self) -> tuple[str, Optional[int]]:
         if self.done:
             return ("Install finished", 100)
+        # Prefer PanelsDCC / JMRI detail over generic apt counts once those start
+        panels_details = (
+            "Downloading JMRI",
+            "Extracting JMRI",
+            "Starting PanelsDCC Connect",
+            "Setting up PanelsDCC Control",
+            "Installing PanelsDCC Connect",
+            "Installing PanelsDCC Control",
+            "Installing Control dependencies",
+            "Handing over to Control",
+            "Installation complete",
+            "Finished",
+        )
+        if self.install_detail in panels_details or (
+            self.install_detail.startswith("Downloading JMRI")
+            or self.install_detail.startswith("Extracting JMRI")
+        ):
+            if "JMRI" in self.install_detail or "dependencies" in self.install_detail.lower():
+                return (self.install_detail + "…", None)
+            return (self.install_detail, None)
+
         label, cur, total = self.apt.phase()
         if label and total > 0:
             return (f"{label}: {cur} / {total}", self.apt.phase_pct())
         if self.install_detail:
-            # Indeterminate npm / download metadata steps
-            if "dependencies" in self.install_detail.lower():
+            if "dependencies" in self.install_detail.lower() or "JMRI" in self.install_detail:
                 return (self.install_detail + "…", None)
             return (self.install_detail, None)
         return (STAGE_LABELS.get(self.stage, self.stage), None)
@@ -308,34 +376,24 @@ class ProgressParser:
         within_apt = 0.0
         within_ladder = 0.0
         label, cur, total = self.apt.phase()
-        if label and total > 0:
+        if label and total > 0 and self.install_detail not in (
+            "Downloading JMRI",
+            "Extracting JMRI",
+            "Starting PanelsDCC Connect",
+            "Setting up PanelsDCC Control",
+        ):
             within_apt = (self.apt.phase_pct() or 0) / 100.0
 
         if self.stage == "panels_installer" and self.install_detail:
-            ladder = [
-                "Starting PanelsDCC installer",
-                "Installing required packages",
-                "Downloading PanelsDCC Connect",
-                "Downloading PanelsDCC Control",
-                "Installing PanelsDCC Connect",
-                "Installing PanelsDCC Control",
-                "Installing Control dependencies",
-                "Creating desktop shortcuts",
-                "Installation complete",
-            ]
             idx = 0
-            for i, step in enumerate(ladder):
+            for i, step in enumerate(INSTALL_LADDER):
                 if self.install_detail.startswith(step) or self.install_detail == step:
                     idx = i
-            # Use floor of current step (not +1) so a fresh apt window can still
-            # refine upward within the step without jumping the whole ladder.
-            within_ladder = idx / max(1, len(ladder) - 1)
+            within_ladder = idx / max(1, len(INSTALL_LADDER) - 1)
 
         if self.stage in ("network", "clock", "starting", "apt_update") and not label:
             within = 0.5
         else:
-            # Never let a brand-new apt window (0/N) pull overall backwards
-            # relative to install.sh substep progress.
             within = max(within_apt, within_ladder)
 
         return min(99, int(completed + weight * within))
@@ -502,8 +560,21 @@ HTML_PAGE = """<!DOCTYPE html>
     const nextEl = document.getElementById('next');
     const openBtn = document.getElementById('openBtn');
     openBtn.addEventListener('click', function () {
-      window.location.reload();
+      // Prefer Control on port 80 once install is done / handing over
+      if (openBtn.dataset.controlUrl) {
+        window.location.href = openBtn.dataset.controlUrl;
+      } else {
+        window.location.reload();
+      }
     });
+    // If opened on :80 while install is running, move to :8080 so Control can take :80 later
+    (function maybeRedirectToAlt() {
+      const port = location.port || (location.protocol === 'https:' ? '443' : '80');
+      if (port === '80' || port === '') {
+        const host = location.hostname;
+        location.replace('http://' + host + ':8080/');
+      }
+    })();
     async function tick() {
       try {
         const r = await fetch('/status.json', { cache: 'no-store' });
@@ -517,8 +588,9 @@ HTML_PAGE = """<!DOCTYPE html>
         barEl.classList.toggle('pulse', !s.done && !s.handover && (s.phase_pct === null || s.phase_pct === undefined));
 
         const showOpen = !!s.handover || !!s.done;
-        if (showOpen && s.done) {
-          detailEl.textContent = s.detail || 'Install finished';
+        if (showOpen) {
+          if (s.control_url) openBtn.dataset.controlUrl = s.control_url;
+          if (s.done) detailEl.textContent = s.detail || 'Install finished';
         }
         nextEl.classList.toggle('visible', showOpen);
       } catch (e) {
@@ -547,7 +619,6 @@ class ProgressState:
                     return self.parser.status()
                 size = self.log_path.stat().st_size
                 if size < self._offset:
-                    # Log rotated / recreated
                     self.parser = ProgressParser()
                     self._offset = 0
                 with open(self.log_path, "r", encoding="utf-8", errors="replace") as f:
@@ -561,13 +632,28 @@ class ProgressState:
             return self.parser.status()
 
 
-def make_handler(state: ProgressState):
+def make_handler(state: ProgressState, *, redirect_to_alt: bool = False, alt_port: int = 8080):
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, fmt: str, *args) -> None:  # quieter
+        def log_message(self, fmt: str, *args) -> None:
             return
 
         def do_GET(self) -> None:  # noqa: N802
             path = self.path.split("?", 1)[0]
+            if redirect_to_alt and path in ("/", "/index.html"):
+                host = self.headers.get("Host", "localhost").split(":")[0]
+                loc = f"http://{host}:{alt_port}/"
+                body = (
+                    f'<!DOCTYPE html><meta http-equiv="refresh" content="0;url={loc}">'
+                    f'<a href="{loc}">Continue install progress</a>'
+                ).encode("utf-8")
+                self.send_response(302)
+                self.send_header("Location", loc)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return
             if path in ("/", "/index.html"):
                 body = HTML_PAGE.encode("utf-8")
                 self.send_response(200)
@@ -617,6 +703,12 @@ STAGE_PAUSE_MARKERS = (
     "[panelsdcc-install]",
     "upgraded,",
     "newly installed",
+    "Setting up panelsdcc-connect",
+    "Setting up panelsdcc-control",
+    "Starting panelsdcc-connect",
+    "Downloading JMRI",
+    "Extracting JMRI",
+    "JMRI is not installed",
 )
 
 
@@ -624,13 +716,19 @@ def _is_stage_line(line: str) -> bool:
     s = line.strip()
     if not s:
         return False
-    if s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up "):
+    if s.startswith("Get:"):
+        return False
+    if s.startswith("Unpacking ") and "panelsdcc-" not in s:
+        return False
+    if s.startswith("Setting up ") and "panelsdcc-" not in s:
         return False
     return any(m in s for m in STAGE_PAUSE_MARKERS)
 
 
 def _is_apt_progress_line(line: str) -> bool:
     s = line.lstrip()
+    if s.startswith("Setting up panelsdcc-"):
+        return False
     return s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up ")
 
 
@@ -642,12 +740,6 @@ def replay_worker(
     stage_pause: float = 0.1,
     apt_batch: int = 3,
 ) -> None:
-    """Replay a vendor log slowly enough to watch each stage in the UI.
-
-    Important stage/install markers are emitted one line at a time with an
-    extra pause. Apt Get/Unpacking/Setting up lines are batched so package
-    counters still animate without taking forever.
-    """
     dest.write_text("", encoding="utf-8")
     lines = source.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
     print(
@@ -678,7 +770,6 @@ def replay_worker(
                 time.sleep(delay)
                 continue
 
-            # Quiet filler (Reading database, npm ANSI, etc.) — emit in larger chunks
             batch = []
             while (
                 i < len(lines)
@@ -703,35 +794,30 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="Path to vendor install log",
     )
     parser.add_argument("--port", type=int, default=int(os.environ.get("PANELS_PROGRESS_PORT", "80")))
+    parser.add_argument(
+        "--alt-port",
+        type=int,
+        default=int(os.environ.get("PANELS_PROGRESS_ALT_PORT", "8080")),
+        help="Secondary progress port (default 8080). Set 0 to disable.",
+    )
     parser.add_argument("--bind", default="0.0.0.0")
     parser.add_argument(
         "--pid-file",
         default=None,
-        help="PID file path (default: /run/... on Pi; temp dir with --replay). Use empty string to skip.",
+        help="PID file path (default: /run/... on Pi; temp dir with --replay).",
     )
     parser.add_argument(
-        "--replay",
-        action="store_true",
-        help="Replay --log into a temp file in chunks (for local visual testing)",
+        "--release-80-flag",
+        default=os.environ.get(
+            "PANELS_PROGRESS_RELEASE_80",
+            "/run/panels-dcc-progress/release-80",
+        ),
+        help="When this file appears, stop listening on --port (keep --alt-port).",
     )
-    parser.add_argument(
-        "--replay-delay",
-        type=float,
-        default=0.1,
-        help="Seconds between apt/filler batches during --replay (default: 0.1)",
-    )
-    parser.add_argument(
-        "--replay-stage-pause",
-        type=float,
-        default=0.1,
-        help="Extra seconds to pause on each stage/install marker (default: 0.1)",
-    )
-    parser.add_argument(
-        "--replay-apt-batch",
-        type=int,
-        default=3,
-        help="How many Get:/Unpacking/Setting up lines per tick (default: 3)",
-    )
+    parser.add_argument("--replay", action="store_true")
+    parser.add_argument("--replay-delay", type=float, default=0.1)
+    parser.add_argument("--replay-stage-pause", type=float, default=0.1)
+    parser.add_argument("--replay-apt-batch", type=int, default=3)
     args = parser.parse_args(argv)
 
     if args.pid_file is None:
@@ -743,8 +829,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(f"Replay source not found: {log_path}", file=sys.stderr)
             return 1
         if args.port == 80:
-            # Local replay should not need root / port 80
             args.port = 8765
+            args.alt_port = 0
             print("Note: --replay defaults to port 8765 (override with --port)", file=sys.stderr)
         tmp = Path(tempfile.gettempdir()) / "panels-dcc-vendor-replay.log"
         threading.Thread(
@@ -771,32 +857,99 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(f"Warning: could not write pid file ({pid_path}): {e}", file=sys.stderr)
             pid_path = None
 
-    handler = make_handler(state)
+    # Primary port (:80 on Pi) redirects browsers to alt (:8080)
+    use_dual = (not args.replay) and args.alt_port and args.alt_port != args.port
+    primary_handler = make_handler(
+        state,
+        redirect_to_alt=bool(use_dual),
+        alt_port=args.alt_port if use_dual else 8080,
+    )
+    alt_handler = make_handler(state, redirect_to_alt=False)
+
     try:
-        httpd = make_server(args.bind, args.port, handler)
+        httpd_primary = make_server(args.bind, args.port, primary_handler)
     except OSError as e:
         print(f"Failed to bind {args.bind}:{args.port}: {e}", file=sys.stderr)
-        if getattr(e, "errno", None) == 98:  # EADDRINUSE
-            print(
-                f"Port {args.port} is already in use — pick another, e.g. --port 8766",
-                file=sys.stderr,
-            )
+        if getattr(e, "errno", None) == 98:
+            print(f"Port {args.port} is already in use — pick another, e.g. --port 8766", file=sys.stderr)
         return 1
+
+    httpd_alt = None
+    if use_dual:
+        try:
+            httpd_alt = make_server(args.bind, args.alt_port, alt_handler)
+        except OSError as e:
+            print(f"Warning: could not bind alt port {args.alt_port}: {e}", file=sys.stderr)
+            # Fall back: serve UI on primary without redirect
+            httpd_primary.RequestHandlerClass = make_handler(state, redirect_to_alt=False)
+            use_dual = False
 
     host = socket.gethostname()
     url_host = "127.0.0.1" if args.bind in ("0.0.0.0", "::") else args.bind
-    print(f"[panels-progress] serving on http://{url_host}:{args.port}/ (hostname={host})")
+    if use_dual and httpd_alt is not None:
+        print(
+            f"[panels-progress] :{args.port} redirects → "
+            f"http://{url_host}:{args.alt_port}/ (hostname={host})",
+            flush=True,
+        )
+        threading.Thread(target=httpd_alt.serve_forever, daemon=True).start()
+    else:
+        print(f"[panels-progress] serving on http://{url_host}:{args.port}/ (hostname={host})", flush=True)
+
+    release_flag = Path(args.release_80_flag) if args.release_80_flag else None
+    primary_released = threading.Event()
+
+    def watch_release() -> None:
+        if release_flag is None or not use_dual:
+            return
+        while not primary_released.is_set():
+            if release_flag.exists():
+                print("[panels-progress] release-80 flag seen — stopping primary port", flush=True)
+                try:
+                    httpd_primary.shutdown()
+                except Exception:
+                    pass
+                primary_released.set()
+                return
+            time.sleep(0.5)
+
+    if use_dual:
+        threading.Thread(target=watch_release, daemon=True).start()
+
     try:
-        httpd.serve_forever()
+        httpd_primary.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
-        httpd.server_close()
-        if pid_path is not None:
-            try:
-                pid_path.unlink(missing_ok=True)
-            except OSError:
-                pass
+        try:
+            httpd_primary.server_close()
+        except Exception:
+            pass
+
+    # Primary stopped (release-80 or Ctrl+C). Keep alt alive if dual-port install mode.
+    if use_dual and httpd_alt is not None and release_flag is not None and release_flag.exists():
+        print(
+            f"[panels-progress] port {args.port} free for Control; "
+            f"progress continues on :{args.alt_port}",
+            flush=True,
+        )
+        try:
+            while True:
+                time.sleep(3600)
+        except KeyboardInterrupt:
+            pass
+
+    if httpd_alt is not None:
+        try:
+            httpd_alt.shutdown()
+            httpd_alt.server_close()
+        except Exception:
+            pass
+    if pid_path is not None:
+        try:
+            pid_path.unlink(missing_ok=True)
+        except OSError:
+            pass
     return 0
 
 
@@ -810,8 +963,10 @@ PROGRESS_SERVER_EOF
   python3 "${PROGRESS_DIR}/server.py" \
     --log "${LOG}" \
     --port 80 \
+    --alt-port 8080 \
     --bind 0.0.0.0 \
     --pid-file "${PROGRESS_PID}" \
+    --release-80-flag "${PROGRESS_DIR}/release-80" \
     >>"${PROGRESS_DIR}/server.log" 2>&1 &
   disown 2>/dev/null || true
   sleep 1
@@ -820,7 +975,7 @@ PROGRESS_SERVER_EOF
   if [[ -f "${PROGRESS_PID}" ]] && kill -0 "$(tr -d ' \n' < "${PROGRESS_PID}")" 2>/dev/null; then
     local host
     host="$(hostname 2>/dev/null || echo panels-dcc)"
-    echo "[panels-dcc-vendor] progress UI at http://${host}/ (try http://${host}.local/ from another device)"
+    echo "[panels-dcc-vendor] progress UI at http://${host}/ (redirects to :8080; try http://${host}.local/ )"
   else
     echo "[panels-dcc-vendor] WARNING: progress UI did not start (see ${PROGRESS_DIR}/server.log)"
   fi

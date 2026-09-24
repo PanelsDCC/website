@@ -14,6 +14,8 @@ APT_SUMMARY_RE = re.compile(
 GET_RE = re.compile(r"^Get:\d+\s+")
 UNPACKING_RE = re.compile(r"^Unpacking\s+")
 SETTING_UP_RE = re.compile(r"^Setting up\s+")
+SETTING_UP_CONNECT_RE = re.compile(r"^Setting up panelsdcc-connect\b")
+SETTING_UP_CONTROL_RE = re.compile(r"^Setting up panelsdcc-control\b")
 
 # Coarse stage weights (sum to 100). Tuned so panels installer dominates.
 STAGE_WEIGHTS = {
@@ -21,8 +23,8 @@ STAGE_WEIGHTS = {
     "network": 2,
     "clock": 1,
     "apt_update": 5,
-    "dist_upgrade": 15,
-    "panels_installer": 70,
+    "dist_upgrade": 10,
+    "panels_installer": 75,
     "finished": 5,
 }
 
@@ -46,8 +48,25 @@ STAGE_LABELS = {
     "finished": "Finished",
 }
 
+# Ordered install.sh / package markers → user-facing detail (ladder for overall %).
+INSTALL_LADDER = [
+    "Starting PanelsDCC installer",
+    "Installing required packages",
+    "Downloading PanelsDCC Connect",
+    "Downloading PanelsDCC Control",
+    "Installing PanelsDCC Connect",
+    "Downloading JMRI",
+    "Extracting JMRI",
+    "Starting PanelsDCC Connect",
+    "Installing PanelsDCC Control",
+    "Setting up PanelsDCC Control",
+    "Installing Control dependencies",
+    "Creating desktop shortcuts",
+    "Installation complete",
+]
+
 INSTALL_SUBSTEPS = [
-    ("Installing required packages", "Installing required packages (curl, jq, nodejs, npm)"),
+    ("Installing required packages", "Installing required packages"),
     ("Fetching latest release metadata for PanelsDCC/connect", "Downloading PanelsDCC Connect"),
     ("Downloading PanelsDCC/connect", "Downloading PanelsDCC Connect"),
     ("Fetching latest release metadata for PanelsDCC/control", "Downloading PanelsDCC Control"),
@@ -90,7 +109,6 @@ class AptWindow:
         label, cur, total = self.phase()
         if not label or total <= 0:
             return None
-        # Map download / unpack / configure into 0–33 / 33–66 / 66–100 within apt window
         if label.startswith("Downloading"):
             return int(33 * cur / total)
         if label.startswith("Unpacking"):
@@ -107,10 +125,10 @@ class ProgressParser:
     error: Optional[str] = None
     connect_ready: bool = False
     handover: bool = False
+    prefer_alt_port: bool = False
     _max_overall: int = 0
 
     def feed(self, line: str) -> None:
-        # Strip CR and common ANSI noise for matching; keep original-ish text for markers
         clean = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", line).rstrip("\r\n")
         if not clean:
             return
@@ -127,12 +145,15 @@ class ProgressParser:
             self.stage = "clock"
         elif "[panels-dcc-vendor] apt-get update" in clean:
             self.stage = "apt_update"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
         elif "[panels-dcc-vendor] apt-get dist-upgrade" in clean:
             self.stage = "dist_upgrade"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
         elif "[panels-dcc-vendor] running Panels DCC installer" in clean:
             self.stage = "panels_installer"
+            self.prefer_alt_port = True
             self.apt = AptWindow()
             self.install_detail = "Starting PanelsDCC installer"
         elif "[panels-dcc-vendor] finished" in clean:
@@ -149,7 +170,32 @@ class ProgressParser:
         elif "Handing over port 80 to Control" in clean or "Handing over to Control" in clean:
             self.handover = True
             self.connect_ready = True
+            self.prefer_alt_port = True
             self.install_detail = "Handing over to Control"
+        elif "Moving progress UI off port 80" in clean:
+            self.prefer_alt_port = True
+            self.handover = False  # still installing Control
+
+        # PanelsDCC package + JMRI markers (long Connect setup)
+        if SETTING_UP_CONNECT_RE.match(clean):
+            self.apt.active = False
+            self.prefer_alt_port = True
+            self.install_detail = "Installing PanelsDCC Connect"
+            self.connect_ready = False
+        elif "JMRI is not installed" in clean or "Downloading JMRI" in clean:
+            self.apt.active = False
+            self.install_detail = "Downloading JMRI"
+        elif "Extracting JMRI" in clean:
+            self.install_detail = "Extracting JMRI"
+        elif "JMRI" in clean and "installed successfully" in clean:
+            self.install_detail = "Starting PanelsDCC Connect"
+        elif "Starting panelsdcc-connect service" in clean:
+            self.install_detail = "Starting PanelsDCC Connect"
+            self.connect_ready = True
+        elif SETTING_UP_CONTROL_RE.match(clean):
+            self.apt.active = False
+            self.install_detail = "Setting up PanelsDCC Control"
+            self.connect_ready = True
 
         if clean.startswith("[panelsdcc-install] "):
             msg = clean[len("[panelsdcc-install] ") :]
@@ -160,14 +206,13 @@ class ProgressParser:
                         self.apt.active = False
                     break
             if msg.startswith("Installing connect.deb"):
+                self.install_detail = "Installing PanelsDCC Connect"
+            if msg.startswith("Installing control.deb"):
                 self.connect_ready = True
-            if (
-                msg.startswith("Installing control.deb")
-                or msg.startswith("Stopping install progress")
-                or msg.startswith("Handing over")
-            ):
+                self.install_detail = "Installing PanelsDCC Control"
+            if msg.startswith("Stopping install progress") or msg.startswith("Handing over"):
                 self.connect_ready = True
-                self.handover = True
+                self.prefer_alt_port = True
 
         m = APT_SUMMARY_RE.match(clean)
         if m:
@@ -179,7 +224,9 @@ class ProgressParser:
                 self.apt.gets += 1
             elif UNPACKING_RE.match(clean):
                 self.apt.unpacking += 1
-            elif SETTING_UP_RE.match(clean):
+            elif SETTING_UP_RE.match(clean) and not SETTING_UP_CONNECT_RE.match(clean) and not SETTING_UP_CONTROL_RE.match(
+                clean
+            ):
                 self.apt.setting_up += 1
 
     def feed_text(self, text: str) -> None:
@@ -194,7 +241,6 @@ class ProgressParser:
                 hostname = "panels-dcc"
 
         overall = self._compute_overall()
-        # Monotonic: never report a lower overall than before
         if overall < self._max_overall:
             overall = self._max_overall
         else:
@@ -213,19 +259,41 @@ class ProgressParser:
             "hostname": host,
             "connect_ready": self.connect_ready or self.done,
             "handover": self.handover or self.done,
+            "prefer_alt_port": self.prefer_alt_port or self.stage not in ("starting", "network", "clock"),
             "connect_url": f"http://{host}:9000/",
             "control_url": f"http://{host}/",
+            "progress_url": f"http://{host}:8080/",
         }
 
     def _detail_and_phase(self) -> tuple[str, Optional[int]]:
         if self.done:
             return ("Install finished", 100)
+        # Prefer PanelsDCC / JMRI detail over generic apt counts once those start
+        panels_details = (
+            "Downloading JMRI",
+            "Extracting JMRI",
+            "Starting PanelsDCC Connect",
+            "Setting up PanelsDCC Control",
+            "Installing PanelsDCC Connect",
+            "Installing PanelsDCC Control",
+            "Installing Control dependencies",
+            "Handing over to Control",
+            "Installation complete",
+            "Finished",
+        )
+        if self.install_detail in panels_details or (
+            self.install_detail.startswith("Downloading JMRI")
+            or self.install_detail.startswith("Extracting JMRI")
+        ):
+            if "JMRI" in self.install_detail or "dependencies" in self.install_detail.lower():
+                return (self.install_detail + "…", None)
+            return (self.install_detail, None)
+
         label, cur, total = self.apt.phase()
         if label and total > 0:
             return (f"{label}: {cur} / {total}", self.apt.phase_pct())
         if self.install_detail:
-            # Indeterminate npm / download metadata steps
-            if "dependencies" in self.install_detail.lower():
+            if "dependencies" in self.install_detail.lower() or "JMRI" in self.install_detail:
                 return (self.install_detail + "…", None)
             return (self.install_detail, None)
         return (STAGE_LABELS.get(self.stage, self.stage), None)
@@ -246,34 +314,24 @@ class ProgressParser:
         within_apt = 0.0
         within_ladder = 0.0
         label, cur, total = self.apt.phase()
-        if label and total > 0:
+        if label and total > 0 and self.install_detail not in (
+            "Downloading JMRI",
+            "Extracting JMRI",
+            "Starting PanelsDCC Connect",
+            "Setting up PanelsDCC Control",
+        ):
             within_apt = (self.apt.phase_pct() or 0) / 100.0
 
         if self.stage == "panels_installer" and self.install_detail:
-            ladder = [
-                "Starting PanelsDCC installer",
-                "Installing required packages",
-                "Downloading PanelsDCC Connect",
-                "Downloading PanelsDCC Control",
-                "Installing PanelsDCC Connect",
-                "Installing PanelsDCC Control",
-                "Installing Control dependencies",
-                "Creating desktop shortcuts",
-                "Installation complete",
-            ]
             idx = 0
-            for i, step in enumerate(ladder):
+            for i, step in enumerate(INSTALL_LADDER):
                 if self.install_detail.startswith(step) or self.install_detail == step:
                     idx = i
-            # Use floor of current step (not +1) so a fresh apt window can still
-            # refine upward within the step without jumping the whole ladder.
-            within_ladder = idx / max(1, len(ladder) - 1)
+            within_ladder = idx / max(1, len(INSTALL_LADDER) - 1)
 
         if self.stage in ("network", "clock", "starting", "apt_update") and not label:
             within = 0.5
         else:
-            # Never let a brand-new apt window (0/N) pull overall backwards
-            # relative to install.sh substep progress.
             within = max(within_apt, within_ladder)
 
         return min(99, int(completed + weight * within))
