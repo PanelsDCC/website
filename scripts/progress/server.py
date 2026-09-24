@@ -148,8 +148,21 @@ HTML_PAGE = """<!DOCTYPE html>
     const nextEl = document.getElementById('next');
     const openBtn = document.getElementById('openBtn');
     openBtn.addEventListener('click', function () {
-      window.location.reload();
+      // Prefer Control on port 80 once install is done / handing over
+      if (openBtn.dataset.controlUrl) {
+        window.location.href = openBtn.dataset.controlUrl;
+      } else {
+        window.location.reload();
+      }
     });
+    // If opened on :80 while install is running, move to :8080 so Control can take :80 later
+    (function maybeRedirectToAlt() {
+      const port = location.port || (location.protocol === 'https:' ? '443' : '80');
+      if (port === '80' || port === '') {
+        const host = location.hostname;
+        location.replace('http://' + host + ':8080/');
+      }
+    })();
     async function tick() {
       try {
         const r = await fetch('/status.json', { cache: 'no-store' });
@@ -163,8 +176,9 @@ HTML_PAGE = """<!DOCTYPE html>
         barEl.classList.toggle('pulse', !s.done && !s.handover && (s.phase_pct === null || s.phase_pct === undefined));
 
         const showOpen = !!s.handover || !!s.done;
-        if (showOpen && s.done) {
-          detailEl.textContent = s.detail || 'Install finished';
+        if (showOpen) {
+          if (s.control_url) openBtn.dataset.controlUrl = s.control_url;
+          if (s.done) detailEl.textContent = s.detail || 'Install finished';
         }
         nextEl.classList.toggle('visible', showOpen);
       } catch (e) {
@@ -193,7 +207,6 @@ class ProgressState:
                     return self.parser.status()
                 size = self.log_path.stat().st_size
                 if size < self._offset:
-                    # Log rotated / recreated
                     self.parser = ProgressParser()
                     self._offset = 0
                 with open(self.log_path, "r", encoding="utf-8", errors="replace") as f:
@@ -207,13 +220,28 @@ class ProgressState:
             return self.parser.status()
 
 
-def make_handler(state: ProgressState):
+def make_handler(state: ProgressState, *, redirect_to_alt: bool = False, alt_port: int = 8080):
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, fmt: str, *args) -> None:  # quieter
+        def log_message(self, fmt: str, *args) -> None:
             return
 
         def do_GET(self) -> None:  # noqa: N802
             path = self.path.split("?", 1)[0]
+            if redirect_to_alt and path in ("/", "/index.html"):
+                host = self.headers.get("Host", "localhost").split(":")[0]
+                loc = f"http://{host}:{alt_port}/"
+                body = (
+                    f'<!DOCTYPE html><meta http-equiv="refresh" content="0;url={loc}">'
+                    f'<a href="{loc}">Continue install progress</a>'
+                ).encode("utf-8")
+                self.send_response(302)
+                self.send_header("Location", loc)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return
             if path in ("/", "/index.html"):
                 body = HTML_PAGE.encode("utf-8")
                 self.send_response(200)
@@ -263,6 +291,12 @@ STAGE_PAUSE_MARKERS = (
     "[panelsdcc-install]",
     "upgraded,",
     "newly installed",
+    "Setting up panelsdcc-connect",
+    "Setting up panelsdcc-control",
+    "Starting panelsdcc-connect",
+    "Downloading JMRI",
+    "Extracting JMRI",
+    "JMRI is not installed",
 )
 
 
@@ -270,13 +304,19 @@ def _is_stage_line(line: str) -> bool:
     s = line.strip()
     if not s:
         return False
-    if s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up "):
+    if s.startswith("Get:"):
+        return False
+    if s.startswith("Unpacking ") and "panelsdcc-" not in s:
+        return False
+    if s.startswith("Setting up ") and "panelsdcc-" not in s:
         return False
     return any(m in s for m in STAGE_PAUSE_MARKERS)
 
 
 def _is_apt_progress_line(line: str) -> bool:
     s = line.lstrip()
+    if s.startswith("Setting up panelsdcc-"):
+        return False
     return s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up ")
 
 
@@ -288,12 +328,6 @@ def replay_worker(
     stage_pause: float = 0.1,
     apt_batch: int = 3,
 ) -> None:
-    """Replay a vendor log slowly enough to watch each stage in the UI.
-
-    Important stage/install markers are emitted one line at a time with an
-    extra pause. Apt Get/Unpacking/Setting up lines are batched so package
-    counters still animate without taking forever.
-    """
     dest.write_text("", encoding="utf-8")
     lines = source.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
     print(
@@ -324,7 +358,6 @@ def replay_worker(
                 time.sleep(delay)
                 continue
 
-            # Quiet filler (Reading database, npm ANSI, etc.) — emit in larger chunks
             batch = []
             while (
                 i < len(lines)
@@ -349,35 +382,30 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="Path to vendor install log",
     )
     parser.add_argument("--port", type=int, default=int(os.environ.get("PANELS_PROGRESS_PORT", "80")))
+    parser.add_argument(
+        "--alt-port",
+        type=int,
+        default=int(os.environ.get("PANELS_PROGRESS_ALT_PORT", "8080")),
+        help="Secondary progress port (default 8080). Set 0 to disable.",
+    )
     parser.add_argument("--bind", default="0.0.0.0")
     parser.add_argument(
         "--pid-file",
         default=None,
-        help="PID file path (default: /run/... on Pi; temp dir with --replay). Use empty string to skip.",
+        help="PID file path (default: /run/... on Pi; temp dir with --replay).",
     )
     parser.add_argument(
-        "--replay",
-        action="store_true",
-        help="Replay --log into a temp file in chunks (for local visual testing)",
+        "--release-80-flag",
+        default=os.environ.get(
+            "PANELS_PROGRESS_RELEASE_80",
+            "/run/panels-dcc-progress/release-80",
+        ),
+        help="When this file appears, stop listening on --port (keep --alt-port).",
     )
-    parser.add_argument(
-        "--replay-delay",
-        type=float,
-        default=0.1,
-        help="Seconds between apt/filler batches during --replay (default: 0.1)",
-    )
-    parser.add_argument(
-        "--replay-stage-pause",
-        type=float,
-        default=0.1,
-        help="Extra seconds to pause on each stage/install marker (default: 0.1)",
-    )
-    parser.add_argument(
-        "--replay-apt-batch",
-        type=int,
-        default=3,
-        help="How many Get:/Unpacking/Setting up lines per tick (default: 3)",
-    )
+    parser.add_argument("--replay", action="store_true")
+    parser.add_argument("--replay-delay", type=float, default=0.1)
+    parser.add_argument("--replay-stage-pause", type=float, default=0.1)
+    parser.add_argument("--replay-apt-batch", type=int, default=3)
     args = parser.parse_args(argv)
 
     if args.pid_file is None:
@@ -389,8 +417,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(f"Replay source not found: {log_path}", file=sys.stderr)
             return 1
         if args.port == 80:
-            # Local replay should not need root / port 80
             args.port = 8765
+            args.alt_port = 0
             print("Note: --replay defaults to port 8765 (override with --port)", file=sys.stderr)
         tmp = Path(tempfile.gettempdir()) / "panels-dcc-vendor-replay.log"
         threading.Thread(
@@ -417,32 +445,99 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(f"Warning: could not write pid file ({pid_path}): {e}", file=sys.stderr)
             pid_path = None
 
-    handler = make_handler(state)
+    # Primary port (:80 on Pi) redirects browsers to alt (:8080)
+    use_dual = (not args.replay) and args.alt_port and args.alt_port != args.port
+    primary_handler = make_handler(
+        state,
+        redirect_to_alt=bool(use_dual),
+        alt_port=args.alt_port if use_dual else 8080,
+    )
+    alt_handler = make_handler(state, redirect_to_alt=False)
+
     try:
-        httpd = make_server(args.bind, args.port, handler)
+        httpd_primary = make_server(args.bind, args.port, primary_handler)
     except OSError as e:
         print(f"Failed to bind {args.bind}:{args.port}: {e}", file=sys.stderr)
-        if getattr(e, "errno", None) == 98:  # EADDRINUSE
-            print(
-                f"Port {args.port} is already in use — pick another, e.g. --port 8766",
-                file=sys.stderr,
-            )
+        if getattr(e, "errno", None) == 98:
+            print(f"Port {args.port} is already in use — pick another, e.g. --port 8766", file=sys.stderr)
         return 1
+
+    httpd_alt = None
+    if use_dual:
+        try:
+            httpd_alt = make_server(args.bind, args.alt_port, alt_handler)
+        except OSError as e:
+            print(f"Warning: could not bind alt port {args.alt_port}: {e}", file=sys.stderr)
+            # Fall back: serve UI on primary without redirect
+            httpd_primary.RequestHandlerClass = make_handler(state, redirect_to_alt=False)
+            use_dual = False
 
     host = socket.gethostname()
     url_host = "127.0.0.1" if args.bind in ("0.0.0.0", "::") else args.bind
-    print(f"[panels-progress] serving on http://{url_host}:{args.port}/ (hostname={host})")
+    if use_dual and httpd_alt is not None:
+        print(
+            f"[panels-progress] :{args.port} redirects → "
+            f"http://{url_host}:{args.alt_port}/ (hostname={host})",
+            flush=True,
+        )
+        threading.Thread(target=httpd_alt.serve_forever, daemon=True).start()
+    else:
+        print(f"[panels-progress] serving on http://{url_host}:{args.port}/ (hostname={host})", flush=True)
+
+    release_flag = Path(args.release_80_flag) if args.release_80_flag else None
+    primary_released = threading.Event()
+
+    def watch_release() -> None:
+        if release_flag is None or not use_dual:
+            return
+        while not primary_released.is_set():
+            if release_flag.exists():
+                print("[panels-progress] release-80 flag seen — stopping primary port", flush=True)
+                try:
+                    httpd_primary.shutdown()
+                except Exception:
+                    pass
+                primary_released.set()
+                return
+            time.sleep(0.5)
+
+    if use_dual:
+        threading.Thread(target=watch_release, daemon=True).start()
+
     try:
-        httpd.serve_forever()
+        httpd_primary.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
-        httpd.server_close()
-        if pid_path is not None:
-            try:
-                pid_path.unlink(missing_ok=True)
-            except OSError:
-                pass
+        try:
+            httpd_primary.server_close()
+        except Exception:
+            pass
+
+    # Primary stopped (release-80 or Ctrl+C). Keep alt alive if dual-port install mode.
+    if use_dual and httpd_alt is not None and release_flag is not None and release_flag.exists():
+        print(
+            f"[panels-progress] port {args.port} free for Control; "
+            f"progress continues on :{args.alt_port}",
+            flush=True,
+        )
+        try:
+            while True:
+                time.sleep(3600)
+        except KeyboardInterrupt:
+            pass
+
+    if httpd_alt is not None:
+        try:
+            httpd_alt.shutdown()
+            httpd_alt.server_close()
+        except Exception:
+            pass
+    if pid_path is not None:
+        try:
+            pid_path.unlink(missing_ok=True)
+        except OSError:
+            pass
     return 0
 
 

@@ -103,6 +103,7 @@ install_deb() {
 }
 
 stop_progress_ui() {
+  # Full stop (optional cleanup). Prefer release_progress_port_80 during install.
   local pid_file="/run/panels-dcc-progress/server.pid"
   local pid=""
 
@@ -111,14 +112,36 @@ stop_progress_ui() {
   fi
 
   if [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null; then
-    log "Stopping install progress UI so Control can use port 80..."
+    log "Stopping install progress UI..."
     kill "${pid}" 2>/dev/null || true
     sleep 0.5
     if kill -0 "${pid}" 2>/dev/null; then
       kill -9 "${pid}" 2>/dev/null || true
     fi
   fi
-  rm -f "${pid_file}" 2>/dev/null || true
+  rm -f "${pid_file}" /run/panels-dcc-progress/release-80 2>/dev/null || true
+}
+
+release_progress_port_80() {
+  # Progress listens on :80 (redirect) and :8080 (UI). Free :80 for Control; keep :8080.
+  local flag="/run/panels-dcc-progress/release-80"
+  mkdir -p /run/panels-dcc-progress
+  log "Moving progress UI off port 80 (still available on :8080)..."
+  touch "${flag}"
+  local i
+  for i in $(seq 1 40); do
+    if command -v ss >/dev/null 2>&1; then
+      if ! ss -ltn 2>/dev/null | grep -qE ':80\s'; then
+        log "Port 80 is free for Control."
+        return 0
+      fi
+    else
+      sleep 1
+      return 0
+    fi
+    sleep 0.5
+  done
+  log "Port 80 may still be busy; continuing with Control install anyway."
 }
 
 # Published control .debs skip npm install when npm is missing (nodejs != npm on Raspberry Pi OS).
@@ -238,10 +261,8 @@ main() {
   download_latest_deb "${CONTROL_REPO}" "${control_deb}"
 
   install_deb "${connect_deb}"
-  # Give the progress page a moment to show Open PanelsDCC before we free port 80.
-  log "Handing over port 80 to Control — refresh your browser in a few seconds..."
-  sleep 4
-  stop_progress_ui
+  # Progress stays on :8080 through Control install; free :80 for Control.
+  release_progress_port_80
   install_deb "${control_deb}"
   install_control_npm
   maybe_enable_service panelsdcc-connect connect

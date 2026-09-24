@@ -108,12 +108,24 @@ class ProgressStatusTests(unittest.TestCase):
         self.assertTrue(s["handover"])
         self.assertEqual(s["connect_url"], "http://panels-dcc:9000/")
 
-    def test_connect_ready_after_connect_deb(self):
-        text = _prefix_until(self.lines, lambda l: "Installing connect.deb" in l)
+    def test_connect_ready_after_connect_service(self):
+        text = _prefix_until(self.lines, lambda l: "Starting panelsdcc-connect service" in l)
         s = parse_log(text, hostname="panels-dcc")
         self.assertTrue(s["connect_ready"])
+        self.assertIn("Connect", s["detail"])
         self.assertFalse(s["done"])
-        self.assertEqual(s["connect_url"], "http://panels-dcc:9000/")
+
+    def test_jmri_download_detail(self):
+        text = _prefix_until(self.lines, lambda l: "Downloading JMRI" in l)
+        s = parse_log(text, hostname="panels-dcc")
+        self.assertIn("JMRI", s["detail"])
+        self.assertEqual(s["stage"], "panels_installer")
+
+    def test_setting_up_control(self):
+        text = _prefix_until(self.lines, lambda l: "Setting up panelsdcc-control" in l)
+        s = parse_log(text, hostname="panels-dcc")
+        self.assertIn("Control", s["detail"])
+        self.assertTrue(s["connect_ready"])
 
     def test_installation_complete_before_vendor_finished(self):
         text = _prefix_until(self.lines, lambda l: "Installation complete." in l)

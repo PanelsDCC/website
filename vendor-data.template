@@ -72,8 +72,10 @@ PROGRESS_SERVER_EOF
   python3 "${PROGRESS_DIR}/server.py" \
     --log "${LOG}" \
     --port 80 \
+    --alt-port 8080 \
     --bind 0.0.0.0 \
     --pid-file "${PROGRESS_PID}" \
+    --release-80-flag "${PROGRESS_DIR}/release-80" \
     >>"${PROGRESS_DIR}/server.log" 2>&1 &
   disown 2>/dev/null || true
   sleep 1
@@ -82,7 +84,7 @@ PROGRESS_SERVER_EOF
   if [[ -f "${PROGRESS_PID}" ]] && kill -0 "$(tr -d ' \n' < "${PROGRESS_PID}")" 2>/dev/null; then
     local host
     host="$(hostname 2>/dev/null || echo panels-dcc)"
-    echo "[panels-dcc-vendor] progress UI at http://${host}/ (try http://${host}.local/ from another device)"
+    echo "[panels-dcc-vendor] progress UI at http://${host}/ (redirects to :8080; try http://${host}.local/ )"
   else
     echo "[panels-dcc-vendor] WARNING: progress UI did not start (see ${PROGRESS_DIR}/server.log)"
   fi
