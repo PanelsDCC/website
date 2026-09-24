@@ -34,9 +34,33 @@ function copyRecursive(src, dest) {
   }
 }
 
+function buildVendorData() {
+  const templatePath = path.join(root, "vendor-data.template");
+  const outPath = path.join(root, "vendor-data");
+  const progressDir = path.join(root, "scripts", "progress");
+  if (!fs.existsSync(templatePath)) {
+    console.warn("vendor-data.template missing; skipping vendor-data embed");
+    return;
+  }
+  const statusPy = fs.readFileSync(path.join(progressDir, "progress_status.py"), "utf8");
+  const serverPy = fs.readFileSync(path.join(progressDir, "server.py"), "utf8");
+  // Strip leading shebang from embedded copies (shell already invokes python3)
+  const stripShebang = (s) => s.replace(/^#![^\n]*\n/, "");
+  let out = fs.readFileSync(templatePath, "utf8");
+  out = out.replace("@@PROGRESS_STATUS_PY@@", stripShebang(statusPy).replace(/\r\n/g, "\n"));
+  out = out.replace("@@PROGRESS_SERVER_PY@@", stripShebang(serverPy).replace(/\r\n/g, "\n"));
+  if (out.includes("@@PROGRESS_")) {
+    throw new Error("vendor-data embed failed: placeholder left unsubstituted");
+  }
+  fs.writeFileSync(outPath, out.replace(/\r\n/g, "\n"), "utf8");
+  console.log("wrote", path.relative(root, outPath), "(embedded progress UI)");
+}
+
 function buildAll() {
   fs.rmSync(distDir, { recursive: true, force: true });
   fs.mkdirSync(distDir, { recursive: true });
+
+  buildVendorData();
 
   // Static assets (repo root source of truth)
   copyRecursive(path.join(root, "images"), path.join(distDir, "images"));
@@ -47,6 +71,15 @@ function buildAll() {
   for (const f of ["CNAME", "install.sh", "vendor-data"]) {
     const p = path.join(root, f);
     if (fs.existsSync(p)) fs.copyFileSync(p, path.join(distDir, f));
+  }
+  // Progress sources for local replay / reference (Pi uses embedded copy in vendor-data)
+  copyRecursive(path.join(root, "scripts", "progress"), path.join(distDir, "progress"));
+  // Do not ship the large fixture log or tests on the public site tree optionally —
+  // keep fixtures for local unittest; strip tests from dist to reduce noise.
+  const distProgress = path.join(distDir, "progress");
+  for (const drop of ["test_progress_status.py", "fixtures", "__pycache__"]) {
+    const p = path.join(distProgress, drop);
+    fs.rmSync(p, { recursive: true, force: true });
   }
 
   const files = walkEjs(pagesDir);
@@ -97,5 +130,9 @@ if (watch) {
   fs.watch(path.join(srcRoot, "templates"), { recursive: true }, debounce);
   fs.watch(path.join(root, "style.css"), debounce);
   fs.watch(siteConfigPath, debounce);
-  console.log("watching src/pages, src/templates, site-config.json, style.css …");
+  const progressDir = path.join(root, "scripts", "progress");
+  if (fs.existsSync(progressDir)) fs.watch(progressDir, { recursive: true }, debounce);
+  if (fs.existsSync(path.join(root, "vendor-data.template")))
+    fs.watch(path.join(root, "vendor-data.template"), debounce);
+  console.log("watching src/pages, src/templates, site-config.json, style.css, progress …");
 }

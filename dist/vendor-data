@@ -8,6 +8,8 @@ Content-Type: text/x-shellscript; charset="us-ascii"
 set -euo pipefail
 
 LOG=/var/log/panels-dcc-vendor.log
+PROGRESS_DIR=/run/panels-dcc-progress
+PROGRESS_PID="${PROGRESS_DIR}/server.pid"
 exec > >(tee -a "$LOG") 2>&1
 
 echo "[panels-dcc-vendor] starting at $(date -Is)"
@@ -51,8 +53,782 @@ wait_for_clock() {
   echo "[panels-dcc-vendor] WARNING: clock still suspicious ($(date -Is)); apt may fail"
 }
 
+start_progress_ui() {
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "[panels-dcc-vendor] WARNING: python3 not found — install progress UI disabled"
+    return 0
+  fi
+
+  mkdir -p "${PROGRESS_DIR}"
+  cat > "${PROGRESS_DIR}/progress_status.py" <<'PROGRESS_STATUS_EOF'
+"""Parse panels-dcc-vendor.log into coarse + apt-refined install progress."""
+
+from __future__ import annotations
+
+import re
+import socket
+from dataclasses import dataclass, field
+from typing import Optional
+
+APT_SUMMARY_RE = re.compile(
+    r"^(\d+)\s+upgraded,\s+(\d+)\s+newly installed",
+)
+GET_RE = re.compile(r"^Get:\d+\s+")
+UNPACKING_RE = re.compile(r"^Unpacking\s+")
+SETTING_UP_RE = re.compile(r"^Setting up\s+")
+
+# Coarse stage weights (sum to 100). Tuned so panels installer dominates.
+STAGE_WEIGHTS = {
+    "starting": 2,
+    "network": 2,
+    "clock": 1,
+    "apt_update": 5,
+    "dist_upgrade": 15,
+    "panels_installer": 70,
+    "finished": 5,
+}
+
+STAGE_ORDER = [
+    "starting",
+    "network",
+    "clock",
+    "apt_update",
+    "dist_upgrade",
+    "panels_installer",
+    "finished",
+]
+
+STAGE_LABELS = {
+    "starting": "Starting",
+    "network": "Waiting for network",
+    "clock": "Waiting for system clock",
+    "apt_update": "Updating package lists",
+    "dist_upgrade": "Upgrading system packages",
+    "panels_installer": "Installing PanelsDCC",
+    "finished": "Finished",
+}
+
+INSTALL_SUBSTEPS = [
+    ("Installing required packages", "Installing required packages (curl, jq, nodejs, npm)"),
+    ("Fetching latest release metadata for PanelsDCC/connect", "Downloading PanelsDCC Connect"),
+    ("Downloading PanelsDCC/connect", "Downloading PanelsDCC Connect"),
+    ("Fetching latest release metadata for PanelsDCC/control", "Downloading PanelsDCC Control"),
+    ("Downloading PanelsDCC/control", "Downloading PanelsDCC Control"),
+    ("Installing connect.deb", "Installing PanelsDCC Connect"),
+    ("Installing control.deb", "Installing PanelsDCC Control"),
+    ("Installing Control Node.js dependencies", "Installing Control dependencies"),
+    ("Creating Desktop folder", "Creating desktop shortcuts"),
+    ("Creating desktop launchers", "Creating desktop shortcuts"),
+    ("Installation complete", "Installation complete"),
+]
+
+
+@dataclass
+class AptWindow:
+    total: int = 0
+    gets: int = 0
+    unpacking: int = 0
+    setting_up: int = 0
+    active: bool = False
+
+    def reset(self, upgraded: int, newly: int) -> None:
+        self.total = max(0, upgraded + newly)
+        self.gets = 0
+        self.unpacking = 0
+        self.setting_up = 0
+        self.active = self.total > 0
+
+    def phase(self) -> tuple[str, int, int]:
+        """Return (label, current, total) for the active apt sub-phase."""
+        if not self.active or self.total <= 0:
+            return ("", 0, 0)
+        if self.setting_up > 0 or self.unpacking >= self.total:
+            return ("Installing", min(self.setting_up, self.total), self.total)
+        if self.unpacking > 0 or self.gets >= self.total:
+            return ("Unpacking", min(self.unpacking, self.total), self.total)
+        return ("Downloading packages", min(self.gets, self.total), self.total)
+
+    def phase_pct(self) -> Optional[int]:
+        label, cur, total = self.phase()
+        if not label or total <= 0:
+            return None
+        # Map download / unpack / configure into 0–33 / 33–66 / 66–100 within apt window
+        if label.startswith("Downloading"):
+            return int(33 * cur / total)
+        if label.startswith("Unpacking"):
+            return 33 + int(33 * cur / total)
+        return 66 + int(34 * cur / total)
+
+
+@dataclass
+class ProgressParser:
+    stage: str = "starting"
+    install_detail: str = ""
+    apt: AptWindow = field(default_factory=AptWindow)
+    done: bool = False
+    error: Optional[str] = None
+    connect_ready: bool = False
+    handover: bool = False
+    _max_overall: int = 0
+
+    def feed(self, line: str) -> None:
+        # Strip CR and common ANSI noise for matching; keep original-ish text for markers
+        clean = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", line).rstrip("\r\n")
+        if not clean:
+            return
+
+        if "[panels-dcc-vendor] starting" in clean:
+            self.stage = "starting"
+        elif "[panels-dcc-vendor] waiting for network" in clean:
+            self.stage = "network"
+        elif "[panels-dcc-vendor] network ready" in clean:
+            self.stage = "network"
+        elif "[panels-dcc-vendor] waiting for NTP" in clean or "[panels-dcc-vendor] waiting for NTP / sane" in clean:
+            self.stage = "clock"
+        elif "[panels-dcc-vendor] clock OK" in clean or "[panels-dcc-vendor] clock looks sane" in clean:
+            self.stage = "clock"
+        elif "[panels-dcc-vendor] apt-get update" in clean:
+            self.stage = "apt_update"
+            self.apt = AptWindow()
+        elif "[panels-dcc-vendor] apt-get dist-upgrade" in clean:
+            self.stage = "dist_upgrade"
+            self.apt = AptWindow()
+        elif "[panels-dcc-vendor] running Panels DCC installer" in clean:
+            self.stage = "panels_installer"
+            self.apt = AptWindow()
+            self.install_detail = "Starting PanelsDCC installer"
+        elif "[panels-dcc-vendor] finished" in clean:
+            self.stage = "finished"
+            self.done = True
+            self.handover = True
+            self.connect_ready = True
+            self.apt.active = False
+            self.install_detail = "Finished"
+        elif "[panelsdcc-install] Installation complete" in clean:
+            self.install_detail = "Installation complete"
+            self.connect_ready = True
+            self.handover = True
+        elif "Handing over port 80 to Control" in clean or "Handing over to Control" in clean:
+            self.handover = True
+            self.connect_ready = True
+            self.install_detail = "Handing over to Control"
+
+        if clean.startswith("[panelsdcc-install] "):
+            msg = clean[len("[panelsdcc-install] ") :]
+            for needle, label in INSTALL_SUBSTEPS:
+                if msg.startswith(needle):
+                    self.install_detail = label
+                    if needle.startswith("Installing Control Node.js"):
+                        self.apt.active = False
+                    break
+            if msg.startswith("Installing connect.deb"):
+                self.connect_ready = True
+            if (
+                msg.startswith("Installing control.deb")
+                or msg.startswith("Stopping install progress")
+                or msg.startswith("Handing over")
+            ):
+                self.connect_ready = True
+                self.handover = True
+
+        m = APT_SUMMARY_RE.match(clean)
+        if m:
+            self.apt.reset(int(m.group(1)), int(m.group(2)))
+            return
+
+        if self.apt.active:
+            if GET_RE.match(clean):
+                self.apt.gets += 1
+            elif UNPACKING_RE.match(clean):
+                self.apt.unpacking += 1
+            elif SETTING_UP_RE.match(clean):
+                self.apt.setting_up += 1
+
+    def feed_text(self, text: str) -> None:
+        for line in text.splitlines():
+            self.feed(line)
+
+    def status(self, hostname: Optional[str] = None) -> dict:
+        if hostname is None:
+            try:
+                hostname = socket.gethostname()
+            except OSError:
+                hostname = "panels-dcc"
+
+        overall = self._compute_overall()
+        # Monotonic: never report a lower overall than before
+        if overall < self._max_overall:
+            overall = self._max_overall
+        else:
+            self._max_overall = overall
+
+        detail, phase_pct = self._detail_and_phase()
+        host = hostname or "panels-dcc"
+        return {
+            "overall_pct": overall,
+            "stage": self.stage,
+            "stage_label": STAGE_LABELS.get(self.stage, self.stage),
+            "detail": detail,
+            "phase_pct": phase_pct,
+            "done": self.done,
+            "error": self.error,
+            "hostname": host,
+            "connect_ready": self.connect_ready or self.done,
+            "handover": self.handover or self.done,
+            "connect_url": f"http://{host}:9000/",
+            "control_url": f"http://{host}/",
+        }
+
+    def _detail_and_phase(self) -> tuple[str, Optional[int]]:
+        if self.done:
+            return ("Install finished", 100)
+        label, cur, total = self.apt.phase()
+        if label and total > 0:
+            return (f"{label}: {cur} / {total}", self.apt.phase_pct())
+        if self.install_detail:
+            # Indeterminate npm / download metadata steps
+            if "dependencies" in self.install_detail.lower():
+                return (self.install_detail + "…", None)
+            return (self.install_detail, None)
+        return (STAGE_LABELS.get(self.stage, self.stage), None)
+
+    def _compute_overall(self) -> int:
+        if self.done or self.stage == "finished":
+            return 100
+
+        completed = 0
+        for name in STAGE_ORDER:
+            if name == self.stage:
+                break
+            completed += STAGE_WEIGHTS[name]
+        else:
+            return 100
+
+        weight = STAGE_WEIGHTS[self.stage]
+        within_apt = 0.0
+        within_ladder = 0.0
+        label, cur, total = self.apt.phase()
+        if label and total > 0:
+            within_apt = (self.apt.phase_pct() or 0) / 100.0
+
+        if self.stage == "panels_installer" and self.install_detail:
+            ladder = [
+                "Starting PanelsDCC installer",
+                "Installing required packages",
+                "Downloading PanelsDCC Connect",
+                "Downloading PanelsDCC Control",
+                "Installing PanelsDCC Connect",
+                "Installing PanelsDCC Control",
+                "Installing Control dependencies",
+                "Creating desktop shortcuts",
+                "Installation complete",
+            ]
+            idx = 0
+            for i, step in enumerate(ladder):
+                if self.install_detail.startswith(step) or self.install_detail == step:
+                    idx = i
+            # Use floor of current step (not +1) so a fresh apt window can still
+            # refine upward within the step without jumping the whole ladder.
+            within_ladder = idx / max(1, len(ladder) - 1)
+
+        if self.stage in ("network", "clock", "starting", "apt_update") and not label:
+            within = 0.5
+        else:
+            # Never let a brand-new apt window (0/N) pull overall backwards
+            # relative to install.sh substep progress.
+            within = max(within_apt, within_ladder)
+
+        return min(99, int(completed + weight * within))
+
+
+def parse_log(text: str, hostname: Optional[str] = None) -> dict:
+    p = ProgressParser()
+    p.feed_text(text)
+    return p.status(hostname=hostname)
+
+
+def parse_log_file(path: str, hostname: Optional[str] = None) -> dict:
+    with open(path, "r", encoding="utf-8", errors="replace") as f:
+        return parse_log(f.read(), hostname=hostname)
+
+PROGRESS_STATUS_EOF
+  cat > "${PROGRESS_DIR}/server.py" <<'PROGRESS_SERVER_EOF'
+"""Lightweight HTTP progress UI for PanelsDCC first-boot install."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import socket
+import sys
+import tempfile
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Optional
+
+# Allow running from /run/panels-dcc-progress or from repo scripts/progress
+_HERE = Path(__file__).resolve().parent
+if str(_HERE) not in sys.path:
+    sys.path.insert(0, str(_HERE))
+
+from progress_status import ProgressParser  # noqa: E402
+
+HTML_PAGE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PanelsDCC — Installing</title>
+  <style>
+    :root {
+      --bg: #1a242f;
+      --fg: #e8eef4;
+      --muted: #9aa8b5;
+      --accent: #3b82f6;
+      --track: #2c3a48;
+      --ok: #34d399;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(ellipse at top, #243447 0%, var(--bg) 55%);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    main {
+      width: min(36rem, 100%);
+    }
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+    }
+    .strap {
+      color: var(--muted);
+      margin: 0 0 1.75rem;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+    .bar-wrap {
+      height: 0.85rem;
+      background: var(--track);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #60a5fa);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .bar.done { background: var(--ok); }
+    .bar.pulse {
+      background: linear-gradient(90deg, var(--accent), #93c5fd, var(--accent));
+      background-size: 200% 100%;
+      animation: shimmer 1.4s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+    .pct {
+      font-size: 1.75rem;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      margin: 0 0 0.35rem;
+    }
+    .stage {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+    }
+    .detail {
+      color: var(--muted);
+      margin: 0;
+      min-height: 1.4em;
+      font-size: 0.95rem;
+    }
+    .next {
+      display: none;
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+    }
+    .next.visible { display: block; }
+    .next a.btn, .next button.btn {
+      display: inline-block;
+      margin: 0;
+      padding: 0.65rem 1.15rem;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .next a.btn:hover, .next button.btn:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Panels DCC</h1>
+    <p class="strap">Installing. This can take 15–30 minutes.</p>
+    <p class="pct" id="pct">0%</p>
+    <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+    <p class="stage" id="stage">Starting</p>
+    <p class="detail" id="detail"></p>
+    <div class="next" id="next">
+      <button type="button" class="btn" id="openBtn">Open PanelsDCC</button>
+    </div>
+  </main>
+  <script>
+    const pctEl = document.getElementById('pct');
+    const barEl = document.getElementById('bar');
+    const stageEl = document.getElementById('stage');
+    const detailEl = document.getElementById('detail');
+    const nextEl = document.getElementById('next');
+    const openBtn = document.getElementById('openBtn');
+    openBtn.addEventListener('click', function () {
+      window.location.reload();
+    });
+    async function tick() {
+      try {
+        const r = await fetch('/status.json', { cache: 'no-store' });
+        const s = await r.json();
+        const pct = Math.max(0, Math.min(100, s.overall_pct || 0));
+        pctEl.textContent = pct + '%';
+        barEl.style.width = pct + '%';
+        stageEl.textContent = s.stage_label || s.stage || '';
+        detailEl.textContent = s.detail || '';
+        barEl.classList.toggle('done', !!s.done || !!s.handover);
+        barEl.classList.toggle('pulse', !s.done && !s.handover && (s.phase_pct === null || s.phase_pct === undefined));
+
+        const showOpen = !!s.handover || !!s.done;
+        if (showOpen && s.done) {
+          detailEl.textContent = s.detail || 'Install finished';
+        }
+        nextEl.classList.toggle('visible', showOpen);
+      } catch (e) {
+        detailEl.textContent = 'Waiting for progress…';
+      }
+    }
+    tick();
+    setInterval(tick, 1500);
+  </script>
+</body>
+</html>
+"""
+
+
+class ProgressState:
+    def __init__(self, log_path: Path):
+        self.log_path = log_path
+        self.parser = ProgressParser()
+        self._offset = 0
+        self._lock = threading.Lock()
+
+    def refresh(self) -> dict:
+        with self._lock:
+            try:
+                if not self.log_path.exists():
+                    return self.parser.status()
+                size = self.log_path.stat().st_size
+                if size < self._offset:
+                    # Log rotated / recreated
+                    self.parser = ProgressParser()
+                    self._offset = 0
+                with open(self.log_path, "r", encoding="utf-8", errors="replace") as f:
+                    f.seek(self._offset)
+                    chunk = f.read()
+                    self._offset = f.tell()
+                if chunk:
+                    self.parser.feed_text(chunk)
+            except OSError:
+                pass
+            return self.parser.status()
+
+
+def make_handler(state: ProgressState):
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, fmt: str, *args) -> None:  # quieter
+            return
+
+        def do_GET(self) -> None:  # noqa: N802
+            path = self.path.split("?", 1)[0]
+            if path in ("/", "/index.html"):
+                body = HTML_PAGE.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if path == "/status.json":
+                payload = json.dumps(state.refresh()).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(payload)
+                return
+            self.send_error(404)
+
+    return Handler
+
+
+def write_pid(pid_path: Path) -> None:
+    pid_path.parent.mkdir(parents=True, exist_ok=True)
+    pid_path.write_text(str(os.getpid()) + "\n", encoding="utf-8")
+
+
+def default_pid_path(*, replay: bool) -> str:
+    env = os.environ.get("PANELS_PROGRESS_PID")
+    if env is not None:
+        return env
+    if replay:
+        return str(Path(tempfile.gettempdir()) / "panels-dcc-progress.pid")
+    return "/run/panels-dcc-progress/server.pid"
+
+
+def make_server(bind: str, port: int, handler) -> ThreadingHTTPServer:
+    class ReusableServer(ThreadingHTTPServer):
+        allow_reuse_address = True
+
+    return ReusableServer((bind, port), handler)
+
+
+STAGE_PAUSE_MARKERS = (
+    "[panels-dcc-vendor]",
+    "[panelsdcc-install]",
+    "upgraded,",
+    "newly installed",
+)
+
+
+def _is_stage_line(line: str) -> bool:
+    s = line.strip()
+    if not s:
+        return False
+    if s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up "):
+        return False
+    return any(m in s for m in STAGE_PAUSE_MARKERS)
+
+
+def _is_apt_progress_line(line: str) -> bool:
+    s = line.lstrip()
+    return s.startswith("Get:") or s.startswith("Unpacking ") or s.startswith("Setting up ")
+
+
+def replay_worker(
+    source: Path,
+    dest: Path,
+    *,
+    delay: float = 0.1,
+    stage_pause: float = 0.1,
+    apt_batch: int = 3,
+) -> None:
+    """Replay a vendor log slowly enough to watch each stage in the UI.
+
+    Important stage/install markers are emitted one line at a time with an
+    extra pause. Apt Get/Unpacking/Setting up lines are batched so package
+    counters still animate without taking forever.
+    """
+    dest.write_text("", encoding="utf-8")
+    lines = source.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
+    print(
+        f"[panels-progress] replay: {len(lines)} lines, "
+        f"delay={delay}s, stage_pause={stage_pause}s (Ctrl+C to stop server)",
+        flush=True,
+    )
+    with open(dest, "a", encoding="utf-8") as out:
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if _is_stage_line(line):
+                out.write(line)
+                out.flush()
+                preview = line.strip()[:90]
+                print(f"[panels-progress] stage → {preview}", flush=True)
+                time.sleep(max(delay, stage_pause))
+                i += 1
+                continue
+
+            if _is_apt_progress_line(line):
+                batch = []
+                while i < len(lines) and len(batch) < apt_batch and _is_apt_progress_line(lines[i]):
+                    batch.append(lines[i])
+                    i += 1
+                out.write("".join(batch))
+                out.flush()
+                time.sleep(delay)
+                continue
+
+            # Quiet filler (Reading database, npm ANSI, etc.) — emit in larger chunks
+            batch = []
+            while (
+                i < len(lines)
+                and len(batch) < 20
+                and not _is_stage_line(lines[i])
+                and not _is_apt_progress_line(lines[i])
+            ):
+                batch.append(lines[i])
+                i += 1
+            out.write("".join(batch))
+            out.flush()
+            time.sleep(delay)
+
+    print("[panels-progress] replay finished — leave the page open or Ctrl+C to stop", flush=True)
+
+
+def main(argv: Optional[list[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="PanelsDCC install progress server")
+    parser.add_argument(
+        "--log",
+        default=os.environ.get("PANELS_PROGRESS_LOG", "/var/log/panels-dcc-vendor.log"),
+        help="Path to vendor install log",
+    )
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PANELS_PROGRESS_PORT", "80")))
+    parser.add_argument("--bind", default="0.0.0.0")
+    parser.add_argument(
+        "--pid-file",
+        default=None,
+        help="PID file path (default: /run/... on Pi; temp dir with --replay). Use empty string to skip.",
+    )
+    parser.add_argument(
+        "--replay",
+        action="store_true",
+        help="Replay --log into a temp file in chunks (for local visual testing)",
+    )
+    parser.add_argument(
+        "--replay-delay",
+        type=float,
+        default=0.1,
+        help="Seconds between apt/filler batches during --replay (default: 0.1)",
+    )
+    parser.add_argument(
+        "--replay-stage-pause",
+        type=float,
+        default=0.1,
+        help="Extra seconds to pause on each stage/install marker (default: 0.1)",
+    )
+    parser.add_argument(
+        "--replay-apt-batch",
+        type=int,
+        default=3,
+        help="How many Get:/Unpacking/Setting up lines per tick (default: 3)",
+    )
+    args = parser.parse_args(argv)
+
+    if args.pid_file is None:
+        args.pid_file = default_pid_path(replay=args.replay)
+
+    log_path = Path(args.log)
+    if args.replay:
+        if not log_path.is_file():
+            print(f"Replay source not found: {log_path}", file=sys.stderr)
+            return 1
+        if args.port == 80:
+            # Local replay should not need root / port 80
+            args.port = 8765
+            print("Note: --replay defaults to port 8765 (override with --port)", file=sys.stderr)
+        tmp = Path(tempfile.gettempdir()) / "panels-dcc-vendor-replay.log"
+        threading.Thread(
+            target=replay_worker,
+            args=(log_path, tmp),
+            kwargs={
+                "delay": args.replay_delay,
+                "stage_pause": args.replay_stage_pause,
+                "apt_batch": max(1, args.replay_apt_batch),
+            },
+            daemon=True,
+        ).start()
+        log_path = tmp
+        print(f"Replaying into {log_path}")
+        print(f"Open http://127.0.0.1:{args.port}/ in your browser")
+
+    state = ProgressState(log_path)
+    pid_path: Optional[Path] = None
+    if args.pid_file:
+        pid_path = Path(args.pid_file)
+        try:
+            write_pid(pid_path)
+        except OSError as e:
+            print(f"Warning: could not write pid file ({pid_path}): {e}", file=sys.stderr)
+            pid_path = None
+
+    handler = make_handler(state)
+    try:
+        httpd = make_server(args.bind, args.port, handler)
+    except OSError as e:
+        print(f"Failed to bind {args.bind}:{args.port}: {e}", file=sys.stderr)
+        if getattr(e, "errno", None) == 98:  # EADDRINUSE
+            print(
+                f"Port {args.port} is already in use — pick another, e.g. --port 8766",
+                file=sys.stderr,
+            )
+        return 1
+
+    host = socket.gethostname()
+    url_host = "127.0.0.1" if args.bind in ("0.0.0.0", "::") else args.bind
+    print(f"[panels-progress] serving on http://{url_host}:{args.port}/ (hostname={host})")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.server_close()
+        if pid_path is not None:
+            try:
+                pid_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+PROGRESS_SERVER_EOF
+
+  # Do not let progress UI failures abort the install
+  set +e
+  python3 "${PROGRESS_DIR}/server.py" \
+    --log "${LOG}" \
+    --port 80 \
+    --bind 0.0.0.0 \
+    --pid-file "${PROGRESS_PID}" \
+    >>"${PROGRESS_DIR}/server.log" 2>&1 &
+  disown 2>/dev/null || true
+  sleep 1
+  set -e
+
+  if [[ -f "${PROGRESS_PID}" ]] && kill -0 "$(tr -d ' \n' < "${PROGRESS_PID}")" 2>/dev/null; then
+    local host
+    host="$(hostname 2>/dev/null || echo panels-dcc)"
+    echo "[panels-dcc-vendor] progress UI at http://${host}/ (try http://${host}.local/ from another device)"
+  else
+    echo "[panels-dcc-vendor] WARNING: progress UI did not start (see ${PROGRESS_DIR}/server.log)"
+  fi
+}
+
 wait_for_network
 wait_for_clock
+start_progress_ui
 
 export DEBIAN_FRONTEND=noninteractive
 echo "[panels-dcc-vendor] apt-get update"

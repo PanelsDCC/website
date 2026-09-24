@@ -20,7 +20,15 @@ For local-only rebuilds (no git push), use:
 npm run build:local
 ```
 
-Build output includes HTML plus `style.css`, `images/`, `videos/` (if present), `CNAME`, `install.sh`, and `vendor-data`.
+Build output includes HTML plus `style.css`, `images/`, `videos/` (if present), `CNAME`, `install.sh`, `vendor-data` (with embedded install progress UI), and `progress/` sources for local testing.
+
+### Install progress UI (local)
+
+```bash
+python3 -m unittest scripts.progress.test_progress_status -v
+# Visual replay (0.1s per tick) — open the printed URL
+python3 scripts/progress/server.py --log scripts/progress/fixtures/panels-dcc-vendor.log --port 8766 --replay
+```
 
 ## Edit
 

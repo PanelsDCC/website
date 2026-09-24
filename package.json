@@ -5,6 +5,7 @@
   "scripts": {
     "build": "npm run build:local && npm run publish:both",
     "build:local": "node scripts/build.mjs",
+    "test:progress": "python3 -m unittest scripts.progress.test_progress_status -v",
     "watch": "node scripts/build.mjs --watch",
     "preview": "serve dist -l 3000",
     "dev": "npm run build:local && concurrently -k \"npm run watch\" \"npm run preview\"",
