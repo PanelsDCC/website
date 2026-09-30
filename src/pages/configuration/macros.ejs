@@ -1,0 +1,39 @@
+<%- include('layout-start.ejs', { title: 'Configuration — Macros', basePath, activeNav: 'getting-started' }) %>
+<div class="main-container">
+    <div class="getting-started-layout">
+        <%- include('sidebar-docs.ejs', { basePath, manualChapter: 2, configStep: 2, configSub: 'macros' }) %>
+        <div class="getting-started-layout-main">
+            <div class="full-width-section">
+                <h1>Macros</h1>
+                <p>Most layouts only need individual <a href="<%= basePath %>/configuration/accessories.html">accessories</a> at first. Use this page when you want one tap in Control to set several points and signals together — for example “set the yard road” or “clear for the main”.</p>
+                <aside class="doc-tip-banner" role="note" aria-label="Optional until you need grouped commands">
+                    <p><strong>You can skip this at first.</strong> Add your points and signals, place them on a panel, and come back here when you want a single command that drives several accessories at once.</p>
+                </aside>
+
+                <h2 id="macros">What a macro is</h2>
+                <p>A macro is a named combination of accessories. Macros appear at the top of the Control accessories list so you can fire several commands in one tap.</p>
+                <p>This is <em>not</em> automatic route setting. Routes that follow trains and sensors will be documented in a later chapter.</p>
+                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/accessories/macros" target="_blank" rel="noopener noreferrer">Open macros on the Panels DCC website</a></p>
+
+                <h2>Creating a macro</h2>
+                <ol>
+                    <li>Click <strong>Create New Macro</strong>.</li>
+                    <li>Give it a name and, if you like, a short description.</li>
+                    <li>Select the accessories that belong in the group.</li>
+                    <li>For each <strong>state combination</strong>, choose the position each accessory should take.</li>
+                    <li>Save. <strong>Location</strong> is filled in later from which panels use those accessories — it may be blank until a panel exists.</li>
+                </ol>
+                <%- include('doc-screenshot-placeholder.ejs', { label: 'Create macro — accessories and state combinations' }) %>
+                <p>Prefer giving each accessory its own DCC number and using macros to group them, rather than sharing one address across many items. That keeps the <a href="<%= basePath %>/configuration/accessories.html#dcc-table">DCC audit table</a> clear and makes macros easier to maintain.</p>
+
+                <%- include('getting-started-pager.ejs', {
+                    pagerPrevHref: basePath + '/configuration/accessories.html',
+                    pagerPrevTitle: 'Accessories',
+                    pagerNextHref: basePath + '/configuration/panels.html',
+                    pagerNextTitle: 'Panels'
+                }) %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('layout-end.ejs') %>

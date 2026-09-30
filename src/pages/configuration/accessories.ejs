@@ -5,12 +5,13 @@
         <div class="getting-started-layout-main">
             <div class="full-width-section">
                 <h1>Accessories</h1>
-                <p>Points, signals, crossings, and other layout items are configured on the <strong>Panels DCC website</strong>. Each accessory has a name, a type that looks like the real thing, and a DCC number for every state you want to throw.</p>
+                <p>Points, signals, crossings, and other layout items are configured on the <strong>Panels DCC website</strong>. Each accessory has a name, a type that looks like the real thing, and a DCC number/state for control.</p>
                 <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/accessories" target="_blank" rel="noopener noreferrer">Open accessories on the Panels DCC website</a></p>
                 <%- include('doc-screenshot-placeholder.ejs', { src: '/images/accessory-control-annotated.png', alt: 'Accessories in PanelsDCC Control', caption: 'Once saved, the same accessories appear in Control with live (best-effort) state.' }) %>
 
                 <h2>Step 1: Choose a type</h2>
-                <p>Click <strong>Add New Accessory</strong>. You first pick a type card — search or filter by category if the grid is long.</p>
+                <p>Click <strong>Add New Accessory</strong>. You first pick a type from the library of built in accessories, or you can also create a custom accessory.</p>
+                <p>Some of the built in accessories are:</p>
                 <div class="doc-icon-row">
                     <div class="doc-icon-card">
                         <img src="<%= basePath %>/images/config/point-rh-up.svg" alt="Point or turnout"/>
@@ -41,48 +42,34 @@
                         <span>Custom</span>
                     </div>
                 </div>
-                <p>There is also a <strong>Turn Table</strong> type for accessories that use several DCC numbers. Custom is the catch-all for lights, motors, and anything without a dedicated picture.</p>
-                <p>For points and signals, pick the subtype that matches the geometry or aspect count (for example Point (Right up), 2 Aspect Home, Home Signal (GWR)).</p>
+                <p>Once you pick the main type, e.g. semaphore signal or point or turnout, you can then pick a subtype if available. For example, a semaphore signal can be a home signal, and upper quadrant (LMS) and lower quadrant (GWR) types are avaialble. Likewise digital signals and points have different subtypes.</p>
                 <%- include('doc-screenshot-placeholder.ejs', { label: 'Accessory type picker' }) %>
 
                 <h2>Step 2: Name and picture</h2>
                 <p>Give the accessory a short <strong>Name</strong> (required, up to 20 characters) — something you will recognise on a panel, such as “P1” or “Up home”.</p>
-                <p>The type image is used by default. You can upload your own picture or <strong>Choose from types</strong> to pick a different icon.</p>
 
                 <h2>Step 3: Options and DCC numbers</h2>
-                <p>Each row is one state the accessory can take (normal / switched, danger / clear, open / closed, and so on). For every row, enter the <strong>DCC number</strong> your command station uses for that state. Some types also ask for a <strong>direction</strong>.</p>
-                <p>Pre-built signals and points usually start with the right rows already; you fill in addresses. Custom and open/closed types let you <strong>Add Option</strong> if you need extra states.</p>
+                <p>Having selected the accessory subtype, the required states will be shown and you can then enter the DCC number and state for each. (How those numbers and states work is covered under <a href="#dcc-table">DCC numbers and the audit table</a> below.)</p>
+                <p>When configuring accessories for the first time, it is often easier to configure the accessory first in PanelsDCC and then programme the accessory on the layout using the accessories learning feature (if available).</p>
                 <%- include('doc-screenshot-placeholder.ejs', { label: 'Accessory options table with DCC numbers' }) %>
 
                 <h2>Step 4: Save and repeat</h2>
                 <p>Click <strong>Create Accessory</strong>. Add the other points and signals you will place on a panel next. You can also create an accessory later from the panel editor if you realise something is missing — see <a href="<%= basePath %>/configuration/panels.html">Panels</a>.</p>
+                <p>When you want one command to set several accessories together, see <a href="<%= basePath %>/configuration/macros.html">Macros</a>.</p>
 
-                <h2 id="macros">Step 5: Macros (optional)</h2>
-                <p>A macro is a named combination of accessories — for example “set the yard road” or “clear for the main”. Macros appear at the top of the Control accessories list so you can fire several commands in one tap.</p>
-                <p>This is <em>not</em> automatic route setting. Routes that follow trains and sensors will be documented in a later chapter.</p>
-                <p><a class="btn btn-primary" href="<%= panelsAppOrigin %>/accessories/macros" target="_blank" rel="noopener noreferrer">Open macros on the Panels DCC website</a></p>
-                <ol>
-                    <li>Click <strong>Create New Macro</strong>.</li>
-                    <li>Give it a name and, if you like, a short description.</li>
-                    <li>Select the accessories that belong in the group.</li>
-                    <li>For each <strong>state combination</strong>, choose the position each accessory should take.</li>
-                    <li>Save. <strong>Location</strong> is filled in later from which panels use those accessories — it may be blank until a panel exists.</li>
-                </ol>
-                <%- include('doc-screenshot-placeholder.ejs', { label: 'Create macro — accessories and state combinations' }) %>
-
-                <h2 id="dcc-table">Advanced: Table view (DCC audit)</h2>
-                <aside class="doc-tip-banner" role="note" aria-label="Skip if you only have a few accessories">
-                    <p><strong>You can skip this</strong> until you have enough accessories that addresses might clash. The card view is enough for a small layout.</p>
-                </aside>
-                <p>On the accessory list, switch <strong>Card View</strong> to <strong>Table View</strong> (desktop). The table is organised by <strong>DCC number</strong>: one row per address, showing accessory name, type, panel(s), option, and direction.</p>
-                <p>Use it to see which addresses are used by what, and to spot two accessories sharing a number by mistake. Click a name in the table to open that accessory.</p>
+                <h2 id="dcc-table">Managing lots of accessories</h2>
+                <p>In DCC, an accessory is controlled by an <strong>accessory number</strong> and a <strong>state</strong>. That address space is separate from trains, so an accessory can reuse a number that a locomotive already has.</p>
+                <p>Each accessory number has two states. Controllers may call them forward/reverse or open/closed; Panels DCC uses <strong>forward</strong> and <strong>reverse</strong>. When you configure an accessory, you map each visual state (normal/thrown, red/green, and so on) to a number and a direction.</p>
+                <p><strong>Many accessories need more than one DCC number and this makes it confusing to manage and remember what is what.</strong> For example a three-aspect signal typically uses two DCC addresses, but only three of the four states (the first DCC address and two states for danger/red and caution/amber, and the second DCC address and one state for clear/green).</p>
+                <p>To make it easier to manage accessories, PanelsDCC provides a <strong>Table View</strong> of the accessories and their DCC numbers and states. This allows you to audit which DCC numbers you have aassigned to what and spot any clashes.</p>
+                <p><strong>Note:</strong> In many cases, to make things easier, you can point several accessories at the same number and state so one command flips many things. Panels DCC allows this, but it is clearer to give each accessory its own numbers and use <a href="<%= basePath %>/configuration/macros.html">macros</a> when you want one tap to move several items.</p>
                 <%- include('doc-screenshot-placeholder.ejs', { label: 'Accessory Table View — DCC numbers used by what' }) %>
 
                 <%- include('getting-started-pager.ejs', {
-                    pagerPrevHref: basePath + '/configuration/function-maps.html',
-                    pagerPrevTitle: 'Functions and function maps',
-                    pagerNextHref: basePath + '/configuration/panels.html',
-                    pagerNextTitle: 'Panels'
+                    pagerPrevHref: basePath + '/configuration/functions.html',
+                    pagerPrevTitle: 'Functions',
+                    pagerNextHref: basePath + '/configuration/macros.html',
+                    pagerNextTitle: 'Macros'
                 }) %>
             </div>
         </div>
